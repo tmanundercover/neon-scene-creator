@@ -4,6 +4,7 @@ import KlaxonsFontFile from './fonts/Klaxons.otf'
 import NeoNeonFontFile from './fonts/Neoneon.otf'
 import designerFont from './fonts/Designer-Font-Family/Designer.otf'
 import designerBoldFont from './fonts/Designer-Font-Family/Designer-Bold.otf'
+import SortDecaiScriptFontFile from './fonts/Swistblnk Sortdecai Cursive Script and Bonus/Swistblnk Sortdecai Cursive Script and Bonus/Sortdecai Cursive Script.ttf'
 
 type FontFace = {
   fontDisplay?: any
@@ -65,37 +66,23 @@ export const NeoNeonFontFace: FontFace = {
   fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
   fontWeight: 400,
   src: `
-    local('Klaxons'),
+    local('Neo Neon'),
     url(${NeoNeonFontFile}) format('opentype')
   `
 }
 
-const fonts = [' Designer-Regular, Designer-Bold, Klaxons, Neo Neon, NEON Regular,sans-serif'].join(',')
-// const feixen: FontFace = {
-//   fontFamily: 'Feixen',
-//   fontStyle: 'normal',
-//   fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
-//   fontWeight: 400,
-//   src: `
-//     local('Feixen'),
-//     url(${Feixen}) format('opentype')
-//   `
-//   // unicodeRange:
-//   //   'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
-// }
+export const SortDecaiCursiveFontFace: FontFace = {
+  fontFamily: 'Sortdecai Cursive Script',
+  fontStyle: 'normal',
+  fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+  fontWeight: 400,
+  src: `
+    local('Sortdecai Cursive Script'),
+    url(${SortDecaiScriptFontFile}) format('truetype')
+  `
+}
 
-// const plexSans: FontFace = {
-//   fontFamily: 'Plex Sans',
-//   fontStyle: 'normal',
-//   fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
-//   fontWeight: 400,
-//   src: `
-//     local('Plex Sans'),
-//     url(${PlexSans}) format('opentype')
-//   `
-//   // unicodeRange:
-//   //   'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
-// }
+const fonts = [' Designer-Regular, Designer-Bold, Sortdecai Cursive Script, Klaxons, Neo Neon, NEON Regular,sans-serif'].join(',')
 
 export const NeonBlueHex = '#1900A0'
 export const NeonGreenHex = '#38FF12'
@@ -170,6 +157,16 @@ const NeonTheme = responsiveFontSizes(
         lineHeight: 1.4,
         letterSpacing: '-0.03em'
       },
+      h6: {
+        // Title3
+        ...designerBold,
+        textTransform: 'uppercase',
+        fontSize: '1.25rem',
+        fontStyle: 'normal',
+        fontWeight: 700,
+        lineHeight: 1.5,
+        letterSpacing: '-0.03em'
+      },
       body1: {
         // Body
         fontSize: '17px',
@@ -224,7 +221,7 @@ const NeonTheme = responsiveFontSizes(
     overrides: {
       MuiCssBaseline: {
         '@global': {
-          '@font-face': [designerRegular, designerBold, NeoNeonFontFace, KlaxonsFontFace, NeonFontFace]
+          '@font-face': [designerRegular, designerBold,SortDecaiCursiveFontFace, NeoNeonFontFace, KlaxonsFontFace, NeonFontFace]
         }
       }
 

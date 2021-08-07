@@ -1,14 +1,15 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
 import {Button, Grid, Modal, Typography} from '@material-ui/core'
-import {DesignType} from '../Canvas'
-import DesignElement from './DesignElement'
+import {DesignElementType, DesignType} from '../Canvas'
+import DesignElement, {fonts} from './DesignElement'
 import questionMark from '../../assets/neon-question.png'
 import questionMarkFuchsia from '../../assets/Question-fuschia-on.png'
 import questionMarkYellow from '../../assets/Question-yellow-on.png'
 import {motion, useAnimation} from 'framer-motion'
 import NeonTheme, {designerBold, NeonFuchsiaHex, NeonYellowRoseBlueHex} from '../../theme/Theme'
-import {Close} from '@material-ui/icons'
+import {Add, Close} from '@material-ui/icons'
+import discoBall from '../../assets/favpng_disco-ball-stock-photography-nightclub.png'
 
 
 export type DesignProps = {
@@ -59,6 +60,8 @@ const Design: FunctionComponent<DesignProps> = (props) => {
       ]
     }
   ]
+
+  const [designElements, setDesignElements] = React.useState<DesignElementType[]>(props.design.elements)
   const [animationStage, setAnimationStage] = React.useState<string>('visible')
   const [openDesignModal, setOpenDesignModal] = React.useState<boolean>(false)
 
@@ -95,12 +98,24 @@ const Design: FunctionComponent<DesignProps> = (props) => {
     }
   }, [showLinks, controls])
 
+  const addDesignElement = () => {
+    const newDesignElement = {
+      size: { height: 250, width: 250 },
+      text: "New Text",
+      fontFace: 'NEON',
+      flickerStyle: 'PULSATE',
+      color: 'green'
+    }
+
+    setDesignElements(state => state.concat(newDesignElement))
+  }
+
 
   return (
-    <Grid container item>
+    <Grid container item style={{backgroundColor: 'white'}}>
       {
         services.map((service: SanityModernServices, index) => {
-          return <Grid key={index} container xs={12} item style={{position: 'relative', height: '100%'}}>
+          return <Grid key={index} container xs={12} item>
             {
               <Grid
                 container
@@ -124,15 +139,15 @@ const Design: FunctionComponent<DesignProps> = (props) => {
                   // padding: NeonTheme.spacing(6, 4),
                   // marginBottom: '32px'
                 }}>
-                <Grid container item><DesignElement width={250} height={250}/></Grid>
+                <Grid container item></Grid>
               </Grid>
             }
             {
               <motion.div
                 style={{
-                  width: '100%', position: 'absolute', top: 0, backgroundColor: 'black',
+                  width: '100%', height: '250px', position: 'absolute', top: 0, backgroundColor: 'black',
                   backgroundImage: `url(${questionMark})`,
-                  backgroundSize: 'cover',
+                  backgroundSize: 'contain',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'none'
                 }}
@@ -186,17 +201,33 @@ const Design: FunctionComponent<DesignProps> = (props) => {
         })
       }
       <Modal
-        open={true}>
-        <Grid container alignItems="center" justifyContent="center"
-              style={{height: 'calc(100vh - 80px)', width: '100vw', position: 'relative'}}>
-          <Grid container item style={{backgroundColor: 'black'}} xs={8}>
-            <Typography variant="h1">PROJECT:</Typography>
-            <DesignElement width={props.design.width} height={props.design.height}/>
-          </Grid>
-          <Grid container style={{position: 'absolute', top: 0, padding: NeonTheme.spacing(4,12), color: 'white'}} justifyContent="flex-end">
-            <Grid item onClick={()=>{setOpenDesignModal(false)}}>
-              <Close fontSize="large"/>
+        open={openDesignModal}>
+        <Grid container direction="column" alignItems="center"
+              style={{
+                height: 'calc(100vh - 80px)',
+                width: 'calc(100vw - 55px)',
+                position: 'relative',
+                backgroundColor: 'black',
+                backgroundImage:`url('${discoBall}')`, backgroundSize:"contain",
+                backgroundRepeat: "no-repeat"
+              }}>
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <Button variant="contained" color="primary" onClick={() => addDesignElement()}><Add/></Button>
             </Grid>
+            <Grid item onClick={() => {
+              setOpenDesignModal(false)
+            }}>
+              <Close style={{color: NeonFuchsiaHex}} fontSize="large"/>
+            </Grid>
+          </Grid>
+          <Grid container item>
+            <Typography variant="h1">PROJECT:</Typography>
+            {
+              designElements.map((designElement)=>{
+                return <DesignElement design={designElement}/>
+              })
+            }
           </Grid>
         </Grid>
       </Modal>

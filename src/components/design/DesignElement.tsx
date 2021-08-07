@@ -7,8 +7,12 @@ import NeonTheme, {
   NeonFontFace,
   NeonFuchsiaHex,
   NeonGreenHex,
-  NeonYellowRoseBlueHex
+  NeonYellowRoseBlueHex, SortDecaiCursiveFontFace
 } from '../../theme/Theme'
+import {motion, useAnimation} from 'framer-motion'
+import {DesignElementType, DesignType} from '../Canvas'
+
+const FONT_MULTIPLIER = 20
 
 export const useStyles = makeStyles((theme: Theme) => ({
   designInfoContainer: {
@@ -16,13 +20,11 @@ export const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
     maxHeight: '2.0em',
     overflowX: 'scroll',
-    width: '500px'
   },
   textField: {
     color: theme.palette.text.secondary,
     marginTop: '2px',
-    height: '12px',
-    width: '24px'
+    height: '12px'
   },
   control: {
     color: theme.palette.text.secondary,
@@ -33,38 +35,41 @@ export const useStyles = makeStyles((theme: Theme) => ({
 
 
 export type DesignElementProps = {
-  width: number,
-  height: number,
+  design?: DesignElementType,
   inProgress?: boolean
 }
 
-const fonts: { [key: string]: any } = {
+export const fonts: { [key: string]: any } = {
   'NEON': NeonFontFace,
   'NEONEON': NeoNeonFontFace,
-  'KLAXONS': KlaxonsFontFace
+  'KLAXONS': KlaxonsFontFace,
+  'SORTDESCAI': SortDecaiCursiveFontFace
 }
 
-
+export const colors: { [key: string]: string } = {
+  'fuchsia': NeonFuchsiaHex,
+  'green': NeonGreenHex,
+  'yellow': NeonYellowRoseBlueHex,
+  'aqua': NeonAquaHex,
+  'purple': NeonElectricVioletHex,
+  'blue': NeonBlueHex
+}
 
 const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
 
   let classes = useStyles(NeonTheme)
+  const controls = useAnimation()
+  controls.start('normal')
 
-  const colors: { [key: string]: string } = {
-    'fuchsia': NeonFuchsiaHex,
-    'green': NeonGreenHex,
-    'yellow': NeonYellowRoseBlueHex,
-    'aqua': NeonAquaHex,
-    'purple': NeonElectricVioletHex,
-    'blue': NeonBlueHex
-  }
 
-  const [size, setSize] = React.useState<{ height: number, width: number }>({height: props.height, width: props.width})
-  const [text] = React.useState<string>('New Text')
-  const [fontFace, setFontFace] = React.useState<string>('NEON')
-  const [fontSize, setFontSize] = React.useState<number>(8)
-  const [flickerStyle, setFlickerStyle] = React.useState<string>('BASIC')
-  const [color,setColor] = React.useState<string>('green')
+
+  const [size, setSize] = React.useState<{ height: number, width: number }>({height: props.design?.size?.height ?? 250, width: props.design?.size?.width ?? 250})
+  const [text, setText] = React.useState<string>(props.design?.text??'New Text')
+  const [fontFace, setFontFace] = React.useState<string>(props.design?.fontFace ?? 'NEON')
+  const [fontSize, setFontSize] = React.useState<number>(4)
+  const [flickerStyle, setFlickerStyle] = React.useState<string>(props.design?.flickerStyle ?? 'pulsate')
+  const [color,setColor] = React.useState<string>(props.design?.color??'green')
+const [showTools,setShowTools] = React.useState<boolean>(false)
 
   const useBasicFlickerStyles = makeStyles((theme: Theme) => ({
     neonText: {
@@ -138,140 +143,178 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     'SUBTLE': useSubtleFlickerStyles(NeonTheme)
   }
   return (
-    <Grid container>
-      <Grid item container direction="column" className={classes.designInfoContainer}>
-        <Grid  item>
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">Width:</Typography>
-            </Grid>
-            <Grid item>
-              <TextField
-                color="secondary"
-                inputProps={{className: classes.textField}}
-                value={size.width}
-                onChange={(event) => setSize((state) => ({...state, width: parseInt(event.target.value)}))}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item>
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">Height:</Typography>
-            </Grid>
-            <Grid item>
-              <TextField
-                color="secondary"
-                inputProps={{className: classes.textField}}
-                value={size.height}
-                onChange={(event) => setSize((state) => ({...state, height: parseInt(event.target.value)}))}
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid container item xs={4} wrap="nowrap">
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">Font:</Typography>
-            </Grid>
-            <Grid item>
-              <Select
-                color="secondary"
-                value={fontFace}
-                input={<Input margin="dense"/>}
-                inputProps={{className: classes.textField}}
-                onChange={(e) => setFontFace(e.target.value as string)}
-              >
-                {
-                  Object.keys(fonts).map((fontKey, index) => {
-                    return <MenuItem key={index} value={fontKey}><Typography
-                      color="textSecondary">{fontKey}</Typography></MenuItem>
-                  })
-                }
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">FontSize:</Typography>
-            </Grid>
-            <Grid item>
-              <Select
-                color="secondary"
-                value={fontSize}
-                input={<Input margin="dense"/>}
-                inputProps={{className: classes.textField}}
-                onChange={(e) => setFontSize(e.target.value as number)}
-              >
-                {
-                  [1, 2, 3, 4, 5, 6, 7, 8].map((fontSize, index) => {
-                    return <MenuItem key={index} value={fontSize}><Typography
-                      color="textSecondary">{fontSize}</Typography></MenuItem>
-                  })
-                }
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">Flicker:</Typography>
-            </Grid>
-            <Grid item>
-              <Select
-                color="secondary"
-                value={flickerStyle}
-                input={<Input margin="dense"/>}
-                inputProps={{className: classes.textField}}
-                onChange={(e) => setFlickerStyle(e.target.value as string)}
-              >
-                {
-                  Object.keys(flickers).map((flickerKey, index) => {
-                    return <MenuItem key={index} value={flickerKey}><Typography
-                      color="textSecondary">{flickerKey}</Typography></MenuItem>
-                  })
-                }
-              </Select>
-            </Grid>
-          </Grid>
-          <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">Color:</Typography>
-            </Grid>
-            <Grid item>
-              <Select
-                color="secondary"
-                value={color}
-                input={<Input margin="dense"/>}
-                inputProps={{className: classes.textField}}
-                onChange={(e) => setColor(e.target.value as string)}
-              >
-                {
-                  Object.keys(colors).map((colorKey, index) => {
-                    return <MenuItem key={index} value={colorKey}><Grid item style={{width: 24, height: 24, backgroundColor: colors[colorKey]}}></Grid></MenuItem>
-                  })
-                }
-              </Select>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+    <motion.div
+      drag
+      initial={{border: "0px solid white"}}
+      onClick={(e)=>{
+        setShowTools(true)
+        controls.start('edit_mode')
+      }}
+      onMouseLeave={(e)=>{
+        setShowTools(false)
+        controls.start('normal')
+      }}
+      variants = {{
+        ['edit_mode']: {border: "1px solid white"},
+        ['normal']: {border: "0px solid white"}
+    }}
+    >
+    <Grid container item style={{
+      height: `calc(${size.height} + '1.8em')`,
+      width: size.width
+    }}>
+
       <Grid container item>
+
         <Grid
           container
           item
           // className={clsx(classes.animatedItem)}
-          style={{
-            height: size.height,
-            width: size.width
-          }}>
-          <Typography className={flickers[flickerStyle].neonText}
-                      style={{...fonts[fontFace], fontSize: `${fontSize * 12}px`}}>{text}</Typography>
+          >
+
+            <Typography className={flickers[flickerStyle].neonText}
+                        style={{...fonts[fontFace], fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
         </Grid>
       </Grid>
-
+      {
+        showTools && <Grid item container direction="column" className={classes.designInfoContainer}>
+          <Grid item>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Width:</Typography>
+              </Grid>
+              <Grid item>
+                <TextField
+                  color="secondary"
+                  inputProps={{className: classes.textField}}
+                  value={size.width}
+                  onChange={(event) => setSize((state) => ({...state, width: parseInt(event.target.value)}))}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Height:</Typography>
+              </Grid>
+              <Grid item>
+                <TextField
+                  color="secondary"
+                  inputProps={{className: classes.textField}}
+                  value={size.height}
+                  onChange={(event) => setSize((state) => ({...state, height: parseInt(event.target.value)}))}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid container item xs={4} wrap="nowrap">
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Text:</Typography>
+              </Grid>
+              <Grid item>
+                <TextField
+                  color="secondary"
+                  inputProps={{className: classes.textField}}
+                  value={text}
+                  onChange={(event) => setText(event.target.value)}
+                />
+              </Grid>
+            </Grid>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Font:</Typography>
+              </Grid>
+              <Grid item>
+                <Select
+                  color="secondary"
+                  value={fontFace}
+                  input={<Input margin="dense"/>}
+                  inputProps={{className: classes.textField}}
+                  onChange={(e) => setFontFace(e.target.value as string)}
+                >
+                  {
+                    Object.keys(fonts).map((fontKey, index) => {
+                      return <MenuItem key={index} value={fontKey}><Typography
+                        color="textSecondary">{fontKey}</Typography></MenuItem>
+                    })
+                  }
+                </Select>
+              </Grid>
+            </Grid>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">FontSize:</Typography>
+              </Grid>
+              <Grid item>
+                <Select
+                  color="secondary"
+                  value={fontSize}
+                  input={<Input margin="dense"/>}
+                  inputProps={{className: classes.textField}}
+                  onChange={(e) => setFontSize(e.target.value as number)}
+                >
+                  {
+                    [1, 2, 3, 4, 5, 6, 7, 8].map((fontSize, index) => {
+                      return <MenuItem key={index} value={fontSize}><Typography
+                        color="textSecondary">{fontSize}</Typography></MenuItem>
+                    })
+                  }
+                </Select>
+              </Grid>
+            </Grid>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Flicker:</Typography>
+              </Grid>
+              <Grid item>
+                <Select
+                  color="secondary"
+                  value={flickerStyle}
+                  input={<Input margin="dense"/>}
+                  inputProps={{className: classes.textField}}
+                  onChange={(e) => setFlickerStyle(e.target.value as string)}
+                >
+                  {
+                    Object.keys(flickers).map((flickerKey, index) => {
+                      return <MenuItem key={index} value={flickerKey}><Typography
+                        color="textSecondary">{flickerKey}</Typography></MenuItem>
+                    })
+                  }
+                </Select>
+              </Grid>
+            </Grid>
+            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+              <Grid item>
+                <Typography variant="caption">Color:</Typography>
+              </Grid>
+              <Grid item>
+                <Select
+                  color="secondary"
+                  value={color}
+                  input={<Input margin="dense"/>}
+                  inputProps={{className: classes.textField}}
+                  onChange={(e) => setColor(e.target.value as string)}
+                >
+                  {
+                    Object.keys(colors).map((colorKey, index) => {
+                      return <MenuItem key={index} value={colorKey}><Grid item style={{
+                        width: 24,
+                        height: 24,
+                        backgroundColor: colors[colorKey]
+                      }}></Grid></MenuItem>
+                    })
+                  }
+                </Select>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      }
 
     </Grid>
+    </motion.div>
   )
 }
 
