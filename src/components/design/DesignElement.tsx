@@ -1,16 +1,10 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import {Grid, Input, MenuItem, Select, TextField, Typography} from '@material-ui/core'
-import NeonTheme, {
-  designerBold,
-  designerRegular, KlaxonsFontFace, NeonAquaHex, NeonBlueHex, NeonElectricVioletHex, NeoNeonFontFace,
-  NeonFontFace,
-  NeonFuchsiaHex,
-  NeonGreenHex,
-  NeonYellowRoseBlueHex, SortDecaiCursiveFontFace
-} from '../../theme/Theme'
+import {FormControl, Grid, InputLabel, MenuItem, Select, TextField, Toolbar, Typography} from '@material-ui/core'
+import NeonTheme from '../../theme/Theme'
 import {motion, useAnimation} from 'framer-motion'
-import {DesignElementType, DesignType} from '../Canvas'
+import {colors, DesignElementType, fonts} from '../Canvas'
+import DesignElementContextMenu from './DesignElementContextMenu'
 
 const FONT_MULTIPLIER = 20
 
@@ -19,7 +13,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.secondary,
     maxHeight: '2.0em',
-    overflowX: 'scroll',
+    overflowX: 'scroll'
   },
   textField: {
     color: theme.palette.text.secondary,
@@ -30,30 +24,36 @@ export const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
     height: '10px'
   },
+  menuPaper: {
+    backgroundColor: theme.palette.background.default,
+    border: '1px solid #FAFAFA'
+  }
 }))
-
 
 
 export type DesignElementProps = {
   design?: DesignElementType,
-  inProgress?: boolean
+  inProgress?: boolean,
+  setContextMenu(menu: any, setDesignElement:any):any
 }
 
-export const fonts: { [key: string]: any } = {
-  'NEON': NeonFontFace,
-  'NEONEON': NeoNeonFontFace,
-  'KLAXONS': KlaxonsFontFace,
-  'SORTDESCAI': SortDecaiCursiveFontFace
-}
+// export const fonts: { [key: string]: any } = {
+//   'NEON': NeonFontFace,
+//   'NEONEON': NeoNeonFontFace,
+//   'KLAXONS': KlaxonsFontFace,
+//   'SORTDESCAI': SortDecaiCursiveFontFace
+// }
+//
+// export const colors: { [key: string]: string } = {
+//   'fuchsia': NeonFuchsiaHex,
+//   'green': NeonGreenHex,
+//   'yellow': NeonYellowRoseBlueHex,
+//   'aqua': NeonAquaHex,
+//   'purple': NeonElectricVioletHex,
+//   'blue': NeonBlueHex
+// }
 
-export const colors: { [key: string]: string } = {
-  'fuchsia': NeonFuchsiaHex,
-  'green': NeonGreenHex,
-  'yellow': NeonYellowRoseBlueHex,
-  'aqua': NeonAquaHex,
-  'purple': NeonElectricVioletHex,
-  'blue': NeonBlueHex
-}
+export type FlickerKeyType = 'BASIC' | 'PULSATE' | 'SUBTLE' | string
 
 const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
 
@@ -61,15 +61,28 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
   const controls = useAnimation()
   controls.start('normal')
 
+  const setContextMenu = (menu:any) =>{
+    props.setContextMenu(menu, setDesignElement)
+  }
 
-
-  const [size, setSize] = React.useState<{ height: number, width: number }>({height: props.design?.size?.height ?? 250, width: props.design?.size?.width ?? 250})
-  const [text, setText] = React.useState<string>(props.design?.text??'New Text')
+  const [height,setHeight] = React.useState<number>(props.design?.size.height ?? 250)
+  const [width,setWidth] = React.useState<number>(props.design?.size.width ?? 250)
+  const [text, setText] = React.useState<string>(props.design?.text ?? 'New Text')
   const [fontFace, setFontFace] = React.useState<string>(props.design?.fontFace ?? 'NEON')
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.design?.flickerStyle ?? 'pulsate')
-  const [color,setColor] = React.useState<string>(props.design?.color??'green')
-const [showTools,setShowTools] = React.useState<boolean>(false)
+  const [color, setColor] = React.useState<string>(props.design?.color ?? 'green')
+
+  const setDesignElement =(designElement: DesignElementType)=>{
+    setHeight(designElement.size.height)
+    setWidth(designElement.size.width)
+    setText(designElement.text)
+    setFontFace(designElement.fontFace)
+    setFontSize(designElement.fontSize)
+    setFlickerStyle(designElement.flickerStyle)
+    setColor(designElement.color)
+  }
+
 
   const useBasicFlickerStyles = makeStyles((theme: Theme) => ({
     neonText: {
@@ -125,7 +138,7 @@ const [showTools,setShowTools] = React.useState<boolean>(false)
 
   const usePulsateStyles = makeStyles((theme: Theme) => ({
     neonText: {
-      animation: `$pulsate 2.5s infinite alternate`,
+      animation: `$pulsate 2.5s infinite alternate`
     },
     '@keyframes pulsate': {
       '100%': {
@@ -142,178 +155,42 @@ const [showTools,setShowTools] = React.useState<boolean>(false)
     'PULSATE': usePulsateStyles(NeonTheme),
     'SUBTLE': useSubtleFlickerStyles(NeonTheme)
   }
+
   return (
     <motion.div
+      dragMomentum={false}
       drag
-      initial={{border: "0px solid white"}}
-      onClick={(e)=>{
-        setShowTools(true)
-        controls.start('edit_mode')
-      }}
-      onMouseLeave={(e)=>{
-        setShowTools(false)
-        controls.start('normal')
-      }}
-      variants = {{
-        ['edit_mode']: {border: "1px solid white"},
-        ['normal']: {border: "0px solid white"}
-    }}
     >
-    <Grid container item style={{
-      height: `calc(${size.height} + '1.8em')`,
-      width: size.width
-    }}>
+      <Grid container item
+            onClick={(e) => {
+              const designElement: DesignElementType = {
+                size: {width: width, height: height},
+                text: text,
+                fontFace: fontFace,
+                flickerStyle: flickerStyle,
+                color: color,
+                fontSize:fontSize
+              }
 
-      <Grid container item>
-
-        <Grid
-          container
-          item
-          // className={clsx(classes.animatedItem)}
-          >
-
+              setContextMenu(<DesignElementContextMenu
+                key={text+width+height+fontFace+flickerStyle+color+fontSize}
+                {...designElement}
+                setDesignElement={setDesignElement}
+              />)
+            }}
+            style={{
+        height: `calc(${height} + '1.8em')`,
+        width: width + "px"
+      }}>
+        <Grid container item>
+          <Grid
+            container
+            item>
             <Typography className={flickers[flickerStyle].neonText}
                         style={{...fonts[fontFace], fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
+          </Grid>
         </Grid>
       </Grid>
-      {
-        showTools && <Grid item container direction="column" className={classes.designInfoContainer}>
-          <Grid item>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Width:</Typography>
-              </Grid>
-              <Grid item>
-                <TextField
-                  color="secondary"
-                  inputProps={{className: classes.textField}}
-                  value={size.width}
-                  onChange={(event) => setSize((state) => ({...state, width: parseInt(event.target.value)}))}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Height:</Typography>
-              </Grid>
-              <Grid item>
-                <TextField
-                  color="secondary"
-                  inputProps={{className: classes.textField}}
-                  value={size.height}
-                  onChange={(event) => setSize((state) => ({...state, height: parseInt(event.target.value)}))}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid container item xs={4} wrap="nowrap">
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Text:</Typography>
-              </Grid>
-              <Grid item>
-                <TextField
-                  color="secondary"
-                  inputProps={{className: classes.textField}}
-                  value={text}
-                  onChange={(event) => setText(event.target.value)}
-                />
-              </Grid>
-            </Grid>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Font:</Typography>
-              </Grid>
-              <Grid item>
-                <Select
-                  color="secondary"
-                  value={fontFace}
-                  input={<Input margin="dense"/>}
-                  inputProps={{className: classes.textField}}
-                  onChange={(e) => setFontFace(e.target.value as string)}
-                >
-                  {
-                    Object.keys(fonts).map((fontKey, index) => {
-                      return <MenuItem key={index} value={fontKey}><Typography
-                        color="textSecondary">{fontKey}</Typography></MenuItem>
-                    })
-                  }
-                </Select>
-              </Grid>
-            </Grid>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">FontSize:</Typography>
-              </Grid>
-              <Grid item>
-                <Select
-                  color="secondary"
-                  value={fontSize}
-                  input={<Input margin="dense"/>}
-                  inputProps={{className: classes.textField}}
-                  onChange={(e) => setFontSize(e.target.value as number)}
-                >
-                  {
-                    [1, 2, 3, 4, 5, 6, 7, 8].map((fontSize, index) => {
-                      return <MenuItem key={index} value={fontSize}><Typography
-                        color="textSecondary">{fontSize}</Typography></MenuItem>
-                    })
-                  }
-                </Select>
-              </Grid>
-            </Grid>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Flicker:</Typography>
-              </Grid>
-              <Grid item>
-                <Select
-                  color="secondary"
-                  value={flickerStyle}
-                  input={<Input margin="dense"/>}
-                  inputProps={{className: classes.textField}}
-                  onChange={(e) => setFlickerStyle(e.target.value as string)}
-                >
-                  {
-                    Object.keys(flickers).map((flickerKey, index) => {
-                      return <MenuItem key={index} value={flickerKey}><Typography
-                        color="textSecondary">{flickerKey}</Typography></MenuItem>
-                    })
-                  }
-                </Select>
-              </Grid>
-            </Grid>
-            <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-              <Grid item>
-                <Typography variant="caption">Color:</Typography>
-              </Grid>
-              <Grid item>
-                <Select
-                  color="secondary"
-                  value={color}
-                  input={<Input margin="dense"/>}
-                  inputProps={{className: classes.textField}}
-                  onChange={(e) => setColor(e.target.value as string)}
-                >
-                  {
-                    Object.keys(colors).map((colorKey, index) => {
-                      return <MenuItem key={index} value={colorKey}><Grid item style={{
-                        width: 24,
-                        height: 24,
-                        backgroundColor: colors[colorKey]
-                      }}></Grid></MenuItem>
-                    })
-                  }
-                </Select>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      }
-
-    </Grid>
     </motion.div>
   )
 }
