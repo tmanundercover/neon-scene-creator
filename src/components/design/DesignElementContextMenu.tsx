@@ -1,14 +1,25 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import NeonTheme from '../../theme/Theme'
-import {colors, DesignElementType, fonts} from '../Canvas'
-import {FormControl, Grid, InputLabel, MenuItem, Select, TextField, Toolbar, Typography} from '@material-ui/core'
+import NeonTheme, {fonts} from '../../theme/Theme'
+import {colors, DesignElementType} from '../Canvas'
+import {
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+  Toolbar,
+  Typography
+} from '@material-ui/core'
 
 export const useStyles = makeStyles((theme: Theme) => ({
   textField: {
-    color: theme.palette.text.secondary,
+    // color: theme.palette.text.secondary,
     marginTop: '2px',
-    height: '12px'
+    height: '12px',
+    ...fonts['Margot']
   },
   menuPaper: {
     backgroundColor: theme.palette.background.default,
@@ -26,11 +37,11 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
   const [height, setHeight] = React.useState<number>(props.size.height ?? 250)
   const [width, setWidth] = React.useState<number>(props.size.width ?? 250)
   const [text, setText] = React.useState<string>(props.text ?? 'New Text')
-  const [fontFace, setFontFace] = React.useState<string>(props.fontFace ?? 'NEON')
+  const [fontFace, setFontFace] = React.useState<string>(props.fontFace ?? 'Barbaro')
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.flickerStyle ?? 'pulsate')
   const [color, setColor] = React.useState<string>(props.color ?? 'green')
-
+  const [flickerOn, setFlickerOn] = React.useState<boolean>(props.flickerOn ?? true)
 
   React.useEffect(() => {
     const designElement = {
@@ -39,11 +50,12 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
       fontFace: fontFace,
       flickerStyle: flickerStyle,
       color: color,
+      flickerOn: flickerOn,
       fontSize: fontSize
     }
 
     props.setDesignElement(designElement)
-  },[width, height, text, fontFace, flickerStyle, color, fontSize])
+  }, [width, height, text, fontFace, flickerStyle, color, fontSize, flickerOn])
 
   React.useEffect(() => {
     const designElement = {
@@ -52,16 +64,17 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
       fontFace: props.fontFace,
       flickerStyle: props.flickerStyle,
       color: props.color,
+      flickerOn: flickerOn,
       fontSize: props.fontSize
     }
 
     props.setDesignElement(designElement)
-  },[props])
+  }, [props])
 
-  return (<Toolbar>
-      <Grid container>
+  return (<Toolbar style={{width: '100%'}}>
+      <Grid container alignItems="flex-end" justifyContent="space-between" spacing={3}>
         <Grid item>
-          <Grid container item alignItems="center" justifyContent="center" spacing={1}>
+          <Grid container item alignItems="flex-end" justifyContent="center" spacing={1}>
             <Grid item container>
               <FormControl fullWidth>
                 {/*<InputLabel id="demo-simple-select-helper-label"><Typography variant="h3">Text:</Typography></InputLabel>*/}
@@ -96,7 +109,6 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
         </Grid></Grid>
 
         <Grid item>
-
           <Grid container item alignItems="center" justifyContent="center" spacing={1}>
             <Grid item container>
               <FormControl fullWidth>
@@ -218,6 +230,16 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
                   })
                 }
               </Select>
+            </FormControl>
+          </Grid>
+          <Grid item container>
+            <FormControl fullWidth>
+              <Switch
+                checked={flickerOn}
+                onChange={(e)=> setFlickerOn(!flickerOn)}
+                color="secondary"
+                name="flickerOn"
+              />
             </FormControl>
           </Grid>
         </Grid></Grid>

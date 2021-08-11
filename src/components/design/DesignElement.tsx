@@ -1,14 +1,19 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import {FormControl, Grid, InputLabel, MenuItem, Select, TextField, Toolbar, Typography} from '@material-ui/core'
-import NeonTheme from '../../theme/Theme'
+import {Grid, Typography} from '@material-ui/core'
+import NeonTheme, {fonts} from '../../theme/Theme'
 import {motion, useAnimation} from 'framer-motion'
-import {colors, DesignElementType, fonts} from '../Canvas'
+import {DesignElementType} from '../Canvas'
 import DesignElementContextMenu from './DesignElementContextMenu'
 
 const FONT_MULTIPLIER = 20
 
 export const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    // "&:focus":{
+    border: '1px solid #FAFAFA'
+    // }
+  },
   designInfoContainer: {
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.secondary,
@@ -34,7 +39,8 @@ export const useStyles = makeStyles((theme: Theme) => ({
 export type DesignElementProps = {
   design?: DesignElementType,
   inProgress?: boolean,
-  setContextMenu(menu: any, setDesignElement:any):any
+  isSelected: boolean,
+  setContextMenu(menu: any, setDesignElement: any): any
 }
 
 // export const fonts: { [key: string]: any } = {
@@ -61,25 +67,27 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
   const controls = useAnimation()
   controls.start('normal')
 
-  const setContextMenu = (menu:any) =>{
+  const setContextMenu = (menu: any) => {
     props.setContextMenu(menu, setDesignElement)
   }
 
-  const [height,setHeight] = React.useState<number>(props.design?.size.height ?? 250)
-  const [width,setWidth] = React.useState<number>(props.design?.size.width ?? 250)
+  const [height, setHeight] = React.useState<number>(props.design?.size.height ?? 250)
+  const [width, setWidth] = React.useState<number>(props.design?.size.width ?? 250)
   const [text, setText] = React.useState<string>(props.design?.text ?? 'New Text')
-  const [fontFace, setFontFace] = React.useState<string>(props.design?.fontFace ?? 'NEON')
+  const [fontFace, setFontFace] = React.useState<string>(props.design?.fontFace ?? 'Barbaro')
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.design?.flickerStyle ?? 'pulsate')
   const [color, setColor] = React.useState<string>(props.design?.color ?? 'green')
+  const [flickerOn,setFlickerOn] = React.useState<boolean>(props.design?.flickerOn ?? false)
 
-  const setDesignElement =(designElement: DesignElementType)=>{
+  const setDesignElement = (designElement: DesignElementType) => {
     setHeight(designElement.size.height)
     setWidth(designElement.size.width)
     setText(designElement.text)
     setFontFace(designElement.fontFace)
     setFontSize(designElement.fontSize)
     setFlickerStyle(designElement.flickerStyle)
+    setFlickerOn(designElement.flickerOn)
     setColor(designElement.color)
   }
 
@@ -162,6 +170,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
       drag
     >
       <Grid container item
+            className={props.isSelected ? classes.root: ''}
             onClick={(e) => {
               const designElement: DesignElementType = {
                 size: {width: width, height: height},
@@ -169,24 +178,25 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
                 fontFace: fontFace,
                 flickerStyle: flickerStyle,
                 color: color,
-                fontSize:fontSize
+                flickerOn: flickerOn,
+                fontSize: fontSize
               }
 
               setContextMenu(<DesignElementContextMenu
-                key={text+width+height+fontFace+flickerStyle+color+fontSize}
+                key={text + width + height + fontFace + flickerStyle + color + fontSize}
                 {...designElement}
                 setDesignElement={setDesignElement}
               />)
             }}
             style={{
-        height: `calc(${height} + '1.8em')`,
-        width: width + "px"
-      }}>
+              height: `calc(${height} + '1.8em')`,
+              width: width + 'px'
+            }}>
         <Grid container item>
           <Grid
             container
             item>
-            <Typography className={flickers[flickerStyle].neonText}
+            <Typography className={flickerOn?flickers[flickerStyle].neonText: ''}
                         style={{...fonts[fontFace], fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
           </Grid>
         </Grid>

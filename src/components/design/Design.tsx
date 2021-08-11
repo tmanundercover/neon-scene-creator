@@ -10,6 +10,7 @@ import discoBall from '../../assets/favpng_disco-ball-stock-photography-nightclu
 export type DesignProps = {
   design: DesignType,
   inProgress?: boolean,
+  background?: any,
   setContextMenu(menu:any, setDesignElement:any): any
 }
 
@@ -26,6 +27,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Design: FunctionComponent<DesignProps> = (props) => {
   const classes = useStyles()
 
+  const [isSelected, setIsSelected] = React.useState<number|null>(null)
+
+
 
   return (
     <Grid container item style={{backgroundColor: 'white'}}>
@@ -35,13 +39,13 @@ const Design: FunctionComponent<DesignProps> = (props) => {
               width: 'calc(100vw - 55px)',
               position: 'relative',
               backgroundColor: 'black',
-              // backgroundImage: `url('${discoBall}')`, backgroundSize: 'contain',
-              // backgroundRepeat: 'no-repeat'
+              backgroundImage: `url(${props?.background?.file})`, backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat'
             }}>
         <Grid container item>
           {
             props.design.elements.map((designElement, index) => {
-              return <DesignElement key={index} design={designElement} setContextMenu={props.setContextMenu} />
+              return <Grid key={index} item onClick={()=>{ setIsSelected(index) }} ><DesignElement isSelected={isSelected === index} design={designElement} setContextMenu={props.setContextMenu} /></Grid>
             })
           }
         </Grid>

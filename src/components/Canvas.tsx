@@ -10,6 +10,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   Tab,
   Tabs,
   TextField,
@@ -17,20 +18,23 @@ import {
   Typography
 } from '@material-ui/core'
 import NeonTheme, {
-  designerRegular,
-  KlaxonsFontFace,
+  fonts,
   NeonAquaHex,
   NeonBlueHex,
   NeonElectricVioletHex,
-  NeoNeonFontFace,
-  NeonFontFace,
   NeonFuchsiaHex,
   NeonGreenHex,
-  NeonYellowRoseBlueHex,
-  SortDecaiCursiveFontFace
+  NeonYellowRoseBlueHex
 } from '../theme/Theme'
 import {Dashboard, Layers, MenuBook, Photo, Star, TextFields} from '@material-ui/icons'
 import Design from './design/Design'
+import Preview from './design/ruler/Preview'
+import galaxy1 from '../assets/backgrounds/galaxy/2474215.jpg'
+import galaxy2 from '../assets/backgrounds/galaxy/2474216.jpg'
+import galaxy3 from '../assets/backgrounds/galaxy/5517472.jpg'
+import brick1 from '../assets/backgrounds/brick/161326.jpg'
+import brick2 from '../assets/backgrounds/brick/1858110.jpg'
+import brick3 from '../assets/backgrounds/brick/1858126.jpg'
 
 const drawerWidth = 450
 const rulerWidth = 40
@@ -53,7 +57,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: "black"
+    backgroundColor: 'black'
   },
   drawerContainer: {
     overflow: 'auto',
@@ -63,20 +67,82 @@ export const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     paddingLeft: drawerWidth,
     backgroundColor: theme.palette.background.paper,
-    height: '100vh'
+    height: '100vh',
+    width: `calc(100vw - ${drawerWidth}px)`
   },
   tabs: {
     // borderRight: `1px solid ${theme.palette.divider}`
   },
   textField: {
     color: textFieldColor,
-    ...designerRegular
+    ...fonts['Designer-Regular']
   },
   menuPaper: {
     backgroundColor: theme.palette.background.default,
     border: '1px solid #FAFAFA'
   }
 }))
+
+// .ruler {
+//   position: relative;
+//   list-style: none;
+//   margin: 0;
+//   padding: 0;
+//   overflow: hidden;
+//
+//   &__background {
+//     position: absolute;
+//     left:0; width:100%;
+//     height: 50%;
+//
+//     bottom: 0; // top, when inverted;
+//   }
+//
+//   &__item {
+//     display: block;
+//     position: absolute;
+//     left:0;
+//     top:50%;
+//     transform: translate(-50%,-50%);
+//     margin: -2px 0 0 -1px;
+//     color: #444;
+//
+//     &:before {
+//       content: "";
+//       position: absolute;
+//       left:50%; top: 100%;
+//       width: 1px; height: 100vh;
+//       background: currentColor;
+//     }
+//
+//     &:hover {
+//       color: blue;
+//     }
+//     // move the pointer line into the button to avoid focus-within
+//     &:focus-within {
+//       button { box-shadow: 0 0 0 2px rgba(0,0,255, 0.3); }
+//     }
+//   }
+// }
+//
+// .button {
+//   outline: none;
+//   border: none;
+//   border: 1px solid;
+//   // color: white;
+//   border-radius: 4px;
+//   padding: 1px 2px 2px;
+//   line-height: 1;
+//   color: currentColor;
+//   font-weight: 700;
+//   background-color: white;
+//   font-size: 10px;
+//
+//   &:hover {
+//     // background: darkgray;
+//   }
+//   // transform: rotate(90deg)
+// }
 
 export type CanvasProps = {}
 
@@ -101,7 +167,8 @@ export type DesignElementType = {
   size: { height: number, width: number },
   text: string,
   fontSize: number,
-  fontFace: 'NEON' | 'NEONEON' | 'KLAXONS' | string,
+  fontFace: string,
+  flickerOn: boolean,
   flickerStyle: 'PULSATE' | 'SUBTLE' | 'BASIC' | string,
   color: 'green' | 'fuchsia' | 'yellow' | 'blue' | 'violet' | string
 }
@@ -114,8 +181,9 @@ const INITIAL_DESIGN = {
     fontSize: 4,
     size: {height: 250, width: 250},
     text: 'New Text',
-    fontFace: 'NEON',
+    fontFace: 'Barbaro',
     flickerStyle: 'PULSATE',
+    flickerOn: true,
     color: 'green'
   }]
 }
@@ -147,18 +215,37 @@ function TabPanel(props: TabPanelProps) {
   )
 }
 
+const backgrounds = [{
+  file: galaxy1,
+  title: 'Galaxy 1'
+},
+  {
+    file: galaxy2,
+    title: 'Galaxy 2'
+  },
+  {
+    file: galaxy3,
+    title: 'Galaxy 3'
+  },
+  {
+    file: brick1,
+    title: 'Brick 1'
+  },
+  {
+    file: brick2,
+    title: 'Brick 2'
+  },
+  {
+    file: brick3,
+    title: 'Brick 3'
+  }]
+
+
 function a11yProps(index: any) {
   return {
     id: `vertical-tab-${index}`,
     'aria-controls': `vertical-tabpanel-${index}`
   }
-}
-
-export const fonts: { [key: string]: any } = {
-  'NEON': NeonFontFace,
-  'NEONEON': NeoNeonFontFace,
-  'KLAXONS': KlaxonsFontFace,
-  'SORTDESCAI': SortDecaiCursiveFontFace
 }
 
 export const colors: { [key: string]: string } = {
@@ -175,15 +262,16 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
 
   const [inProgressDesign, setInProgressDesign] = React.useState<DesignType>(INITIAL_DESIGN)
   const [menuChoice, setMenuChoice] = React.useState<number>(0)
-  const [fontFace, setFontFace] = React.useState<string>('NEON')
+  const [fontFace, setFontFace] = React.useState<string>('Barbaro')
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [color, setColor] = React.useState<string>('green')
   const [flickerStyle, setFlickerStyle] = React.useState<string>('BASIC')
   const [text, setText] = React.useState<string>('New Text')
-  const [contextCanvasMenu,setCanvasContextMenu] = React.useState<any>(undefined)
+  const [contextCanvasMenu, setCanvasContextMenu] = React.useState<any>(undefined)
+  const [backgroundImage,setBackgroundImage] = React.useState<{title: string, file: any}|null>(null)
+const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
 
-  const setContextMenu = (menu: any, setDesignElement:any)=>{
-    // setDesignElement()
+  const setContextMenu = (menu: any) => {
     setCanvasContextMenu(menu)
   }
 
@@ -194,6 +282,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
       fontSize: fontSize,
       fontFace: fontFace,
       flickerStyle: flickerStyle,
+      flickerOn: flickerOn,
       color: color
     }
 
@@ -240,51 +329,73 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 className={classes.tabs}
               >
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><MenuBook style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
-                                            fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
-                                              variant="h6">Templates</Typography></Grid>
-                     </Grid>} {...a11yProps(0)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><MenuBook style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
+                                         fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
+                                           variant="h6">Backgrounds</Typography></Grid>
+                  </Grid>} {...a11yProps(0)} />
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><TextFields style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
-                                              fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
-                                              variant="h6">Text</Typography></Grid>
-                     </Grid>} {...a11yProps(1)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><TextFields style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
+                                           fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
+                                           variant="h6">Text</Typography></Grid>
+                  </Grid>} {...a11yProps(1)} />
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><Star style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
-                                        fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 2 ? iconOnColor : iconColor}} variant="h6">Clip
-                         Arts</Typography></Grid>
-                     </Grid>} {...a11yProps(2)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><Star style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
+                                     fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 2 ? iconOnColor : iconColor}} variant="h6">Clip
+                      Arts</Typography></Grid>
+                  </Grid>} {...a11yProps(2)} />
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><Photo style={{color: menuChoice === 3 ? iconOnColor : iconColor}} fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
-                                              variant="h6">Photos</Typography></Grid>
-                     </Grid>} {...a11yProps(3)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><Photo style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
+                                      fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
+                                           variant="h6">Photos</Typography></Grid>
+                  </Grid>} {...a11yProps(3)} />
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><Dashboard style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
-                                             fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
-                                              variant="h6">Elements</Typography></Grid>
-                     </Grid>} {...a11yProps(4)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><Dashboard style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
+                                          fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
+                                           variant="h6">Elements</Typography></Grid>
+                  </Grid>} {...a11yProps(4)} />
                 <Tab
-                     label={<Grid container direction="column" alignItems="center">
-                       <Grid item><Layers style={{color: menuChoice === 5 ? iconOnColor : iconColor}} fontSize="large"/></Grid>
-                       <Grid item><Typography style={{color: menuChoice === 5 ? iconOnColor : iconColor}}
-                                              variant="h6">Layers</Typography></Grid>
-                     </Grid>} {...a11yProps(5)} />
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><Layers style={{color: menuChoice === 5 ? iconOnColor : iconColor}}
+                                       fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 5 ? iconOnColor : iconColor}}
+                                           variant="h6">Layers</Typography></Grid>
+                  </Grid>} {...a11yProps(5)} />
               </Tabs>
             </Grid>
             <Grid item style={{backgroundColor: selectedTabContentBg, flexGrow: 2, color: selectedTabContentColor}}>
               <Toolbar/>
               <TabPanel value={menuChoice} index={0}>
-                Templates
+                <Typography>Backgrounds</Typography>
+                <Grid item>
+                  {
+                    backgrounds.map((background) => {
+
+                      return <Grid item xs={12} onClick={(e:any)=>{
+                        setBackgroundImage(background)
+                      }}>
+                        <Grid item container alignItems="center" justifyContent="center" style={{
+                          height: '100px',
+                          width: '100%',
+                          backgroundImage: `url(${background.file})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center'
+                        }}>
+                          <Typography variant="h5" color="textPrimary">{background.title}</Typography>
+                        </Grid>
+                      </Grid>
+                    })
+                  }
+                </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={1}>
                 <Grid item>
@@ -303,7 +414,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 </Grid>
                 <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
                   <Grid item container>
-                    <FormControl fullWidth >
+                    <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-helper-label"><Typography variant="h3"
                                                                                    color="secondary">Font:</Typography></InputLabel>
                       <Select
@@ -383,12 +494,13 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   </Grid>
                 </Grid>
                 <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-
                   <Grid item container>
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label"><Typography variant="h3"
-                                                                                   color="secondary">Flicker:</Typography></InputLabel>
-
+                      <InputLabel id="demo-simple-select-helper-label">
+                        <Typography
+                          variant="h3"
+                          color="secondary">Flicker:</Typography>
+                      </InputLabel>
                       <Select
                         fullWidth
                         color="secondary"
@@ -406,11 +518,31 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                       </Select>
                     </FormControl>
                   </Grid>
+                  <Grid item container>
+                    <FormControl fullWidth>
+                      <Switch
+                        checked={flickerOn}
+                        onChange={(e)=> setFlickerOn(e.target.value === 'true')}
+                        color="secondary"
+                        name="flickerOn"
+                      />
+                    </FormControl>
+                  </Grid>
                 </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
+                <Grid
+                  container
+                  item
+                  wrap="nowrap"
+                  alignItems="center"
+                  justifyContent="center"
+                  spacing={1}>
                   <Grid item>
-                    <Button variant="contained" onClick={() => addNewDesignElement()}><Typography>Add New
-                      Text</Typography></Button>
+                    <Button
+                      variant="contained"
+                      onClick={() => addNewDesignElement()}>
+                      <Typography>
+                        Add New Text</Typography>
+                    </Button>
                   </Grid>
                 </Grid>
               </TabPanel>
@@ -432,13 +564,13 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
       </Grid>
       <Grid container item>
         <main className={classes.content}>
-          <Toolbar/>
           <Grid container direction="column">
-            <Grid item container>
+            <Grid item container><Toolbar/></Grid>
+            <Grid item container style={{backgroundColor: 'black'}} xs={12}>
               {contextCanvasMenu || <Toolbar/>}
             </Grid>
             <Grid item container>
-              <Grid item container xs={1}><Box width="40px">space</Box></Grid>
+              <Box height="40px" width="40px">space</Box>
               <Grid
                 item
                 container
@@ -446,26 +578,31 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 style={{
                   height: `${rulerWidth}px`
                 }}>
-                <Typography color="textSecondary">top ruler</Typography>
+                {/* http://jsfiddle.net/thirdender/kwcug/ */}
+                {<Preview sizes={[320, 480, 600]}/>}
               </Grid>
             </Grid>
             <Grid item container>
               <Grid container item alignItems="stretch" wrap="nowrap">
                 <Grid item style={{minWidth: `${rulerWidth}px`}}><Typography color="textSecondary">left
                   ruler</Typography></Grid>
-                <Grid item
-                      style={{
-                        minWidth: `calc(100vw - ${rulerWidth + drawerWidth}px)`,
-                        height: `calc(100vh - ${rulerWidth}px)`,
-                        backgroundColor: 'black'
-                      }}><Design design={inProgressDesign} setContextMenu={setContextMenu}/></Grid>
+                <Grid
+                  item
+                  style={{
+                    minWidth: `calc(100vw - ${rulerWidth + drawerWidth}px)`,
+                    height: `calc(100vh - ${rulerWidth}px)`,
+                    backgroundColor: 'black'
+                  }}>
+                  <Design
+                    background={backgroundImage}
+                    design={inProgressDesign}
+                    setContextMenu={setContextMenu}/>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
         </main>
       </Grid>
-
-
     </Grid>
   )
 }

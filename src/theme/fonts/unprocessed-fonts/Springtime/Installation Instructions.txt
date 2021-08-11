@@ -1,0 +1,12 @@
+
+Installation Instructions
+1) Once the file has downloaded you must first unzip the file.
+2) Next locate either the OTF or TTF files. 
+3) Copy the files..Goto Control Panel->Fonts.Paste.
+4) A small box will appear asking you to install the font. Click Install.
+5) Open up your relevant software (Photoshop, Illustrator,Ms Word etc) and you can now use the font. 
+
+Have fun!
+
+
+
