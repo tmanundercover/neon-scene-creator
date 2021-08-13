@@ -15,68 +15,75 @@ import metricaFont from './fonts/Metrica/Metrica-Regular.otf'
 import neythalFont from './fonts/Neythal/neythal-regular.ttf'
 import nickainleyFont from './fonts/Nickainley/TTF/Nickainley.ttf'
 import oranienbaumFont from './fonts/Oranienbaum/Oranienbaum.ttf'
-import smaqFont from './fonts/Smaq/alt_smaq_2_8.ttf'
+import smaqFont from './fonts/Smaq/alt_smaq_6_8.ttf'
 import afectaFont from './fonts/Smaq/alt_smaq_2_8.ttf'
-import akumaFont from './fonts/unprocessed-fonts/AkumaFF/TTF/Akuma.ttf'
-import amtenarFont from './fonts/unprocessed-fonts/Amtenar/Amtenar font web/Amtenar.ttf'
-import andersFont from './fonts/unprocessed-fonts/AndersFF/Anders.ttf'
-import badheadFont from './fonts/unprocessed-fonts/Badhead Typeface/Badhead Typeface.otf'
-import barbaroFont from './fonts/unprocessed-fonts/BarbaroFF/barbaro.ttf'
-import beatsFont from './fonts/unprocessed-fonts/Beats OTF (web FONT)/beats web font/beats-webfont.ttf'
-import bhaversFont from './fonts/unprocessed-fonts/Bhavers-Typeface/Bhavers_Typeface/Bhavers_Typeface.otf'
-import billowFont from './fonts/unprocessed-fonts/Billow Font/Billow.ttf'
-import birchwoodFont from './fonts/unprocessed-fonts/BirchwoodFF/Birchwood/Birchwood Regular.ttf'
-import birchwoodBoldFont from './fonts/unprocessed-fonts/BirchwoodFF/Birchwood/Birchwood Bold.ttf'
-import bohoFont from './fonts/unprocessed-fonts/Boho-Familyff/Boho Script.otf'
-import brilantFont from './fonts/unprocessed-fonts/BrilantFF/Brilant.ttf'
+import akumaFont from './fonts/AkumaFF/TTF/Akuma.ttf'
+import amtenarFont from './fonts/Amtenar/Amtenar font web/Amtenar.ttf'
+import andersFont from './fonts/AndersFF/Anders.ttf'
+import badheadFont from './fonts/Badhead Typeface/Badhead Typeface.otf'
+import barbaroFont from './fonts/BarbaroFF/barbaro.ttf'
+import beatsFont from './fonts/Beats OTF (web FONT)/beats web font/beats-webfont.ttf'
+import bhaversFont from './fonts/Bhavers-Typeface/Bhavers_Typeface/Bhavers_Typeface.otf'
+import billowFont from './fonts/Billow Font/Billow.ttf'
+import birchwoodFont from './fonts/BirchwoodFF/Birchwood/Birchwood Regular.ttf'
+import birchwoodBoldFont from './fonts/BirchwoodFF/Birchwood/Birchwood Bold.ttf'
+import bohoFont from './fonts/Boho-Familyff/Boho Script.otf'
+import bohoDingbatsFont from './fonts/Boho-Familyff/Boho Dingbats.otf'
+import bohoOrnamentsFont from './fonts/Boho-Familyff/Boho Ornaments.otf'
+import brilantFont from './fonts/BrilantFF/Brilant.ttf'
 import chocolateFont
-  from './fonts/unprocessed-fonts/Chocolate Heart Script/Chocolate Heart Script/Chocolate Heart Script.otf'
-import cornishFont from './fonts/unprocessed-fonts/Cornish + Extra/Cornish.otf'
-import evelynFont from './fonts/unprocessed-fonts/Evelyn + Extra/Evelyn_regular.otf'
-import exoticusFont from './fonts/unprocessed-fonts/Exoticus font/Exoticus Font Web/fonts/Exoticus.ttf'
-import fireflyFont from './fonts/unprocessed-fonts/Firefly/SEANCo-Firefly-2015.otf'
-import danzeFont from './fonts/unprocessed-fonts/Fresh-Food-CollectionFF/Danze/Danze.ttf'
-import fryeFont from './fonts/unprocessed-fonts/Fresh-Food-CollectionFF/Frye/Frye.ttf'
-import pictomiffFont from './fonts/unprocessed-fonts/Fresh-Food-CollectionFF/Pictomiff/Pictomiff.ttf'
-import gooniesFont from './fonts/unprocessed-fonts/Goonies/Goonies.ttf'
-import grothikaFont from './fonts/unprocessed-fonts/GrothikaFF/Grothika-Regular.otf'
-import handtersFont from './fonts/unprocessed-fonts/Handters-typeface/Handters typeface OTF/Handters Typeface.otf'
-import hawaiiFont from './fonts/unprocessed-fonts/HawaiiFF/Hawaii/OTF/Hawaii.otf'
-import heatherFont from './fonts/unprocessed-fonts/Heather-Typeface/Heather.otf'
-import helenaFont from './fonts/unprocessed-fonts/Helena-Font/Helena/OTF/Helena.otf'
-import humblleFont from './fonts/unprocessed-fonts/Humblle + Extra/humblle.otf'
-import infamyFont from './fonts/unprocessed-fonts/Infamy-Family-ff/Infamy-Outline.otf'
-import iorekByrnisonFont from './fonts/unprocessed-fonts/Iorek Byrnison/Iorek Byrnison.otf'
-import jeumpaScriptFont from './fonts/unprocessed-fonts/jeumpa script/Jeumpa Script.otf'
-import engineFont from './fonts/unprocessed-fonts/L_ Engineer/LEngineer-Regular.otf'
-import laskerFont from './fonts/unprocessed-fonts/Laskar/Format/OTF/Laskar Script.otf'
-import lemonadeFont from './fonts/unprocessed-fonts/Lemonade Font/Lemonade font.ttf'
-import matadorFont from './fonts/unprocessed-fonts/Matador/Matador/Matador.otf'
-import momFont from './fonts/unprocessed-fonts/MomFF - HOT/Mom-Outline.ttf'
-import monthoersFont from './fonts/unprocessed-fonts/Monthoers/Monthoers.otf'
-import nadhineFont from './fonts/unprocessed-fonts/Nadhine Script/Nadhine Script.otf'
-import newTheoryFont from './fonts/unprocessed-fonts/New-Theoryff/NewTheory.ttf'
-import oliveFont from './fonts/unprocessed-fonts/Oliveff/Olive.otf'
-import peintureFont from './fonts/unprocessed-fonts/Peinture Typeface/Peinture.otf'
-import piconsFont from './fonts/unprocessed-fonts/Picons-Font/Web font/Picons-Font.ttf'
-import rawFont from './fonts/unprocessed-fonts/Raw-Fontff/Raw.ttf'
-import realistFont from './fonts/unprocessed-fonts/Realist/format/Realist.otf'
-import rideMyBikeFont from './fonts/unprocessed-fonts/Ride-My-Bike-Serif-Pro-Family-ff/RidemyBikeSerifPro-Regular.otf'
-import saboresFont from './fonts/unprocessed-fonts/Sabores-Script-Familyff/SaboresScript-Regular/SaboresScript-Regular.otf'
-import scratchFont from './fonts/unprocessed-fonts/ScratchFF/Scratch-Year 1.otf'
-import serenScriptFont from './fonts/unprocessed-fonts/Seren-Script/Seren-Script-Heavy.otf'
-import showcaseFont from './fonts/unprocessed-fonts/Showcase-Family-50-Off/Showcase-Family/ShowcaseScript.otf'
-import splandorFont from './fonts/unprocessed-fonts/Splandor-Typeface/Splandor typeface/Splandor typeface/splandor typeface.otf'
-import springtimeFont from './fonts/unprocessed-fonts/Springtime/Springtime.otf'
-import standlyFont from './fonts/unprocessed-fonts/standly/standly/Standly web font/Standly.otf'
-import starshineFont from './fonts/unprocessed-fonts/Starshine-script/Starshine-Regular.otf'
-import steelmondFont from './fonts/unprocessed-fonts/Steelmond/Steelmond.otf'
-import sweetheartFont from './fonts/unprocessed-fonts/Sweethart Font/Fonts/Sweethart.otf'
-import tomahawkFont from './fonts/unprocessed-fonts/Tomahawk-—-Vintage-Font/Tomahawk.otf'
-import triumpFont from './fonts/unprocessed-fonts/Triump-Familyff/Triump-Regular/Triump-Regular.otf'
-import ttMastersFont from './fonts/unprocessed-fonts/TT Masters/Masters Opentype/TT Masters Thin.otf'
-import twiceFont from './fonts/unprocessed-fonts/Twice/twice.otf'
-import wildYouthFont from './fonts/unprocessed-fonts/Wild-Youth-Typeface/WildYouth-Regular.otf'
+  from './fonts/Chocolate Heart Script/Chocolate Heart Script/Chocolate Heart Script.otf'
+import cornishFont from './fonts/Cornish + Extra/Cornish.otf'
+import evelynFont from './fonts/Evelyn + Extra/Evelyn_regular.otf'
+import exoticusFont from './fonts/Exoticus font/Exoticus Font Web/fonts/Exoticus.ttf'
+import fireflyFont from './fonts/Firefly/SEANCo-Firefly-2015.otf'
+import danzeFont from './fonts/Fresh-Food-CollectionFF/Danze/Danze.ttf'
+import fryeFont from './fonts/Fresh-Food-CollectionFF/Frye/Frye.ttf'
+import fryeOrnamentsFont from './fonts/FryeFF/Frye Ornaments.ttf'
+import pictomiffFont from './fonts/Fresh-Food-CollectionFF/Pictomiff/Pictomiff.ttf'
+import gooniesFont from './fonts/Goonies/Goonies.ttf'
+import grothikaFont from './fonts/GrothikaFF/Grothika-Regular.otf'
+import handtersFont from './fonts/Handters-typeface/Handters typeface OTF/Handters Typeface.otf'
+import hawaiiFont from './fonts/HawaiiFF/Hawaii/OTF/Hawaii.otf'
+import heatherFont from './fonts/Heather-Typeface/Heather.otf'
+import helenaFont from './fonts/Helena-Font/Helena/OTF/Helena.otf'
+import humblleFont from './fonts/Humblle + Extra/humblle.otf'
+import infamyFont from './fonts/Infamy-Family-ff/Infamy-Outline.otf'
+import iorekByrnisonFont from './fonts/Iorek Byrnison/Iorek Byrnison.otf'
+import jeumpaScriptFont from './fonts/jeumpa script/Jeumpa Script.otf'
+import engineFont from './fonts/L_ Engineer/LEngineer-Regular.otf'
+import laskerFont from './fonts/Laskar/Format/OTF/Laskar Script.otf'
+import lemonadeFont from './fonts/Lemonade Font/Lemonade font.ttf'
+import matadorFont from './fonts/Matador/Matador/Matador.otf'
+import momFont from './fonts/MomFF - HOT/Mom-Outline.ttf'
+import monthoersFont from './fonts/Monthoers/Monthoers.otf'
+import nadhineFont from './fonts/Nadhine Script/Nadhine Script.otf'
+import newTheoryFont from './fonts/New-Theoryff/NewTheory.ttf'
+import oliveFont from './fonts/Oliveff/Olive.otf'
+import peintureFont from './fonts/Peinture Typeface/Peinture.otf'
+import piconsFont from './fonts/Picons-Font/Web font/Picons-Font.ttf'
+import rawFont from './fonts/Raw-Fontff/Raw.ttf'
+import realistFont from './fonts/Realist/format/Realist.otf'
+import rideMyBikeFont from './fonts/Ride-My-Bike-Serif-Pro-Family-ff/RidemyBikeSerifPro-Regular.otf'
+import rideMyBikeOrnamentsFont from './fonts/Ride-My-Bike-Serif-Pro-Family-ff/RidemyBike-Ornaments.otf'
+import saboresFont from './fonts/Sabores-Script-Familyff/SaboresScript-Regular/SaboresScript-Regular.otf'
+import saboresDingbatsFont from './fonts/Sabores-Script-Familyff/SaboresScript-Dingbats/SaboresScript-Dingbats.otf'
+import scratchFont from './fonts/ScratchFF/Scratch-Year 1.otf'
+import serenScriptFont from './fonts/Seren-Script/Seren-Script-Heavy.otf'
+import showcaseFont from './fonts/Showcase-Family-50-Off/Showcase-Family/ShowcaseScript.otf'
+import showcaseOrnamentsFont from './fonts/Showcase-Family-50-Off/Showcase-Family/ShowcaseOrn.otf'
+import splandorFont from './fonts/Splandor-Typeface/Splandor typeface/Splandor typeface/splandor typeface.otf'
+import springtimeFont from './fonts/Springtime/Springtime.otf'
+import springtimeOrnamentsFont from './fonts/Springtime/SpringtimeOrnaments.otf'
+import standlyFont from './fonts/standly/standly/Standly web font/Standly.otf'
+import starshineFont from './fonts/Starshine-script/Starshine-Regular.otf'
+import steelmondFont from './fonts/Steelmond/Steelmond.otf'
+import sweetheartFont from './fonts/Sweethart Font/Fonts/Sweethart.otf'
+import tomahawkFont from './fonts/Tomahawk-—-Vintage-Font/Tomahawk.otf'
+import triumpFont from './fonts/Triump-Familyff/Triump-Regular/Triump-Regular.otf'
+import ttMastersFont from './fonts/TT Masters/Masters Opentype/TT Masters Thin.otf'
+import twiceFont from './fonts/Twice/twice.otf'
+import wildYouthFont from './fonts/Wild-Youth-Typeface/WildYouth-Regular.otf'
 import elphFont from './fonts/elph_chubba/chubhand.ttf'
 import monitoricaFont from './fonts/IPHostMonitor-Font/OT-tt/Monitorica-Rg.ttf'
 import loveloFont from './fonts/LoveloLineLight/Lovelo Black.otf'
@@ -84,7 +91,7 @@ import stencilFont from './fonts/StencilStd.otf'
 import monotonFont from './fonts/Monoton/monoton/Monoton-Regular.ttf'
 import marskeFont from './fonts/Marske/Marske.otf'
 
-type FontFace = {
+export type FontFace = {
   fontDisplay: any
   fontFamily: any
   fontStyle: any
@@ -92,7 +99,129 @@ type FontFace = {
   src: string
 }
 
-const allFontFaces: FontFace[] = [
+export const iconFonts: FontFace[] = [{
+  fontFamily: 'Picons Font',
+  fontStyle: 'normal',
+  fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+  fontWeight: 400,
+  src: `
+    local('Picons Font'),
+    url(${piconsFont}) format('opentype')
+  `
+},{
+  fontFamily: 'Boho Dingbats',
+  fontStyle: 'normal',
+  fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+  fontWeight: 400,
+  src: `
+    local('Boho Dingbats'),
+    url(${bohoDingbatsFont}) format('opentype')
+  `
+},{
+  fontFamily: 'Boho Ornaments',
+  fontStyle: 'normal',
+  fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+  fontWeight: 400,
+  src: `
+    local('Boho Ornaments'),
+    url(${bohoOrnamentsFont}) format('opentype')
+  `
+},{
+  fontFamily: 'Frye Ornaments',
+  fontStyle: 'normal',
+  fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+  fontWeight: 400,
+  src: `
+    local('Frye Ornaments'),
+    url(${fryeOrnamentsFont}) format('truetype')
+  `
+}, {
+    fontFamily: 'Ride My Bike Ornaments',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Ride My Bike Ornaments'),
+    url(${rideMyBikeOrnamentsFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Sabores Dingbats',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Sabores Dingbats'),
+    url(${saboresDingbatsFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Showcase Ornaments',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Showcase Ornaments'),
+    url(${showcaseOrnamentsFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Springtime Ornaments',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Springtime Ornaments'),
+    url(${springtimeOrnamentsFont}) format('opentype')
+  `
+  }
+]
+
+export const getIconFont = (fontFamily: string) =>{
+  const result = iconFonts.filter((iconFontFace:FontFace) =>{
+    return iconFontFace.fontFamily === fontFamily
+  })
+
+  if(result[0]){
+    return result[0]
+  } else {
+    return undefined
+  }
+}
+
+export const getFontFace = (fontFamily: string) =>{
+  const result = allFontFaces.filter((fontFace:FontFace) =>{
+    return fontFace.fontFamily === fontFamily
+  })
+
+  if(result[0]){
+    return result[0]
+  } else {
+    return allFontFaces[0]
+  }
+}
+
+export const allFontFaces: FontFace[] = [
+  {
+    fontFamily: 'Designer-Bold',
+    fontStyle: 'bold',
+    fontDisplay: '', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 700,
+    src: `
+    local('designer-bold'),
+    url(${designerBoldFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Designer-Regular',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('desinger'),
+    url(${designerFont}) format('opentype')
+  `
+  },
   {
     fontFamily: 'Stencil',
     fontStyle: 'normal',
@@ -373,17 +502,6 @@ const allFontFaces: FontFace[] = [
     url(${grafterFont}) format('opentype')
   `
   },
-  {
-    fontFamily: 'Designer-Regular',
-    fontStyle: 'normal',
-    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
-    fontWeight: 400,
-    src: `
-    local('desinger'),
-    url(${designerFont}) format('opentype')
-  `
-  }
-  ,
   {
     fontFamily: 'Designer-Bold',
     fontStyle: 'bold',
@@ -707,16 +825,6 @@ const allFontFaces: FontFace[] = [
   `
   },
   {
-    fontFamily: 'Picons Font',
-    fontStyle: 'normal',
-    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
-    fontWeight: 400,
-    src: `
-    local('Picons Font'),
-    url(${piconsFont}) format('opentype')
-  `
-  },
-  {
     fontFamily: 'Raw Font',
     fontStyle: 'normal',
     fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
@@ -895,7 +1003,8 @@ const allFontFaces: FontFace[] = [
     local('Wild Youth'),
     url(${wildYouthFont}) format('opentype')
   `
-  }
+  },
+  ...iconFonts
 ]
 
 export const fonts: { [key: string]: any } = allFontFaces.reduce((accumulator: {[key:string]:any}, currentValue: FontFace) => {
@@ -907,118 +1016,14 @@ export const fonts: { [key: string]: any } = allFontFaces.reduce((accumulator: {
 
 console.log('FOONTS IN THEME', fonts)
 
-//   {
-//   'NEON': NeonFontFace,
-//   'NEONEON': NeoNeonFontFace,
-//   'KLAXONS': KlaxonsFontFace,
-//   'SORTDESCAI': SortDecaiCursiveFontFace,
-//   'GRAFTER': grafterFontFace,
-//   'GROWL': growlFontFace,
-//   'MARGOT': margotFontFace,
-//   'BUILDING': buildingFontFace,
-//   'METRICA': metricaFontFace,
-//   'HIGHTIDE': highTideFontFace,
-//   'NEYTHAL': neythalFontFace,
-//   'NICKAINLEY': nickainleyFontFace,
-//   'ORANIENBAUM': oranienbaumFontFace,
-//   'SMAQ': smaqFontFace,
-//   'AFECTA': afectaFontFace,
-//   'AKUMA': akumaFontFace,
-//   'ANDERS': andersFontFace,
-//   'AMTENAR': amtenarFontFace,
-//   'BADHEAD': badheadFontFace,
-//   'BARBARO': barbaroFontFace,
-//   'BEATS': beatsFontFace,
-//   'BHAVERS': bhaversFontFace,
-//   'BILLOW': billowFontFace,
-//   'BIRCHWOOD': birchwoodFontFace,
-//   'BOHO': bohoFontFace,
-//   'BRILANT': brilantFontFace,
-//   'CHOCOLATE': chocolateFontFace,
-//   'CORNISH': cornishFontFace,
-//   'EVELYN': evelynFontFace,
-//   'EXOTICUS': exoticusFontFace,
-//   'FIREFLY': fireflyFontFace
-// }
-
-
-const theFontsString:string[] = allFontFaces.map((font:FontFace)=>{
+export const theFontsString:string[] = allFontFaces.map((font:FontFace)=>{
   return font.fontFamily
 })
 
 const fontString = [
-  // 'Afecta',
-  // 'Akuma',
-  // 'Amtenar',
-  // 'Anders',
-  // 'Designer-Regular',
-  // 'Neythal',
-  // 'Nickainley',
-  // 'Oranienbaum',
-  // 'Smaq',
-  // 'Metrica',
-  // 'High Tide',
-  // 'Margot',
-  // 'Growl',
-  // 'Grafter',
-  // 'Designer-Bold',
-  // 'Sortdecai Cursive Script',
-  // 'Klaxons',
-  // 'Neo Neon',
-  // 'NEON Regular',
-  // 'Building',
-  // 'Badhead Typeface',
-  // 'Barbaro',
-  // 'Beats',
-  // 'Bhavers',
-  // 'Billow',
-  // 'Birchwood',
-  // 'Boho',
-  // 'Brilant',
-  // 'Chocalate Heart',
-  // 'Cornish',
-  // 'Evelyn',
-  // 'Exoticus',
-  // 'Firefly',
   ...theFontsString,
   'sans-serif'
 ].join(',')
-
-// const allFontFaces = [
-//   designerRegular,
-//   highTideFontFace,
-//   metricaFontFace,
-//   designerBold,
-//   SortDecaiCursiveFontFace,
-//   NeoNeonFontFace,
-//   KlaxonsFontFace,
-//   NeonFontFace,
-//   grafterFontFace,
-//   growlFontFace,
-//   margotFontFace,
-//   neythalFontFace,
-//   nickainleyFontFace,
-//   oranienbaumFontFace,
-//   smaqFontFace,
-//   afectaFontFace,
-//   akumaFontFace,
-//   amtenarFontFace,
-//   andersFontFace,
-//   badheadFontFace,
-//   barbaroFontFace,
-//   beatsFontFace,
-//   bhaversFontFace,
-//   billowFontFace,
-//   birchwoodFontFace,
-//   bohoFontFace,
-//   brilantFontFace,
-//   chocolateFontFace,
-//   cornishFontFace,
-//   evelynFontFace,
-//   exoticusFontFace,
-//   fireflyFontFace
-// ]
-
 
 export const NeonBlueHex = '#1900A0'
 export const NeonGreenHex = '#38FF12'
@@ -1065,7 +1070,7 @@ const NeonTheme = responsiveFontSizes(
       fontFamily: fontString,
       h1: {
         // Title1
-        ...fonts['Designer-Bold'],
+        ...getFontFace('Designer-Bold'),
         textTransform: 'uppercase',
         fontSize: '44px',
         fontStyle: 'normal',
@@ -1085,7 +1090,7 @@ const NeonTheme = responsiveFontSizes(
       },
       h3: {
         // Title3
-        ...fonts['Designer-Bold'],
+        ...getFontFace('Designer-Bold'),
         textTransform: 'uppercase',
         fontSize: '24px',
         fontStyle: 'normal',
@@ -1095,7 +1100,7 @@ const NeonTheme = responsiveFontSizes(
       },
       h6: {
         // Title3
-        ...fonts['Designer-Bold'],
+        ...getFontFace('Designer-Bold'),
         textTransform: 'uppercase',
         fontSize: '1.25rem',
         fontStyle: 'normal',
@@ -1121,7 +1126,7 @@ const NeonTheme = responsiveFontSizes(
       },
       button: {
         // Button
-        ...fonts['Designer-Regular'],
+        ...getFontFace('Designer-Regular'),
         fontSize: '19px',
         fontStyle: 'normal',
         fontWeight: 700,
@@ -1129,7 +1134,7 @@ const NeonTheme = responsiveFontSizes(
         letterSpacing: '-0.03em'
       },
       caption: {
-        ...fonts['Designer-Bold'],
+        ...getFontFace('Designer-Bold'),
         textTransform: 'uppercase',
         fontSize: '16px',
         fontStyle: 'normal',

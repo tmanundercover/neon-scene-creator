@@ -1,24 +1,11 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import {
-  AppBar,
-  Box,
-  Button,
-  Drawer,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  Switch,
-  Tab,
-  Tabs,
-  TextField,
-  Toolbar,
-  Typography
-} from '@material-ui/core'
+import {AppBar, Box, Card, CardContent, Drawer, Grid, Tab, Tabs, Toolbar, Typography} from '@material-ui/core'
 import NeonTheme, {
+  allFontFaces,
+  FontFace,
   fonts,
+  iconFonts,
   NeonAquaHex,
   NeonBlueHex,
   NeonElectricVioletHex,
@@ -35,8 +22,11 @@ import galaxy3 from '../assets/backgrounds/galaxy/5517472.jpg'
 import brick1 from '../assets/backgrounds/brick/161326.jpg'
 import brick2 from '../assets/backgrounds/brick/1858110.jpg'
 import brick3 from '../assets/backgrounds/brick/1858126.jpg'
+import FontSample from './icon-fonts/FontSample'
+import DesignElementContextMenu from './design/DesignElementContextMenu'
+import FontFaceSample from './design/FontFaceSample'
 
-const drawerWidth = 450
+const drawerWidth = 590
 const rulerWidth = 40
 const iconColor = 'white'
 const iconBGColor = 'transparent'
@@ -167,7 +157,7 @@ export type DesignElementType = {
   size: { height: number, width: number },
   text: string,
   fontSize: number,
-  fontFace: string,
+  fontFace: FontFace,
   flickerOn: boolean,
   flickerStyle: 'PULSATE' | 'SUBTLE' | 'BASIC' | string,
   color: 'green' | 'fuchsia' | 'yellow' | 'blue' | 'violet' | string
@@ -181,11 +171,21 @@ const INITIAL_DESIGN = {
     fontSize: 4,
     size: {height: 250, width: 250},
     text: 'New Text',
-    fontFace: 'Barbaro',
+    fontFace: allFontFaces[0],
     flickerStyle: 'PULSATE',
     flickerOn: true,
     color: 'green'
   }]
+}
+
+const INITIAL_DESIGN_ELEMENT: DesignElementType = {
+  fontSize: 4,
+  size: {height: 250, width: 250},
+  text: 'New Text',
+  fontFace: allFontFaces[0],
+  flickerStyle: 'PULSATE',
+  flickerOn: true,
+  color: 'green'
 }
 
 interface TabPanelProps {
@@ -261,29 +261,42 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
   const classes = useStyles(NeonTheme)
 
   const [inProgressDesign, setInProgressDesign] = React.useState<DesignType>(INITIAL_DESIGN)
+  const [inProgressDesignElement, setInProgressDesignElement] = React.useState<DesignElementType>(INITIAL_DESIGN_ELEMENT)
   const [menuChoice, setMenuChoice] = React.useState<number>(0)
-  const [fontFace, setFontFace] = React.useState<string>('Barbaro')
+  const [fontFace, setFontFace] = React.useState<FontFace>(fonts[0])
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [color, setColor] = React.useState<string>('green')
   const [flickerStyle, setFlickerStyle] = React.useState<string>('BASIC')
   const [text, setText] = React.useState<string>('New Text')
   const [contextCanvasMenu, setCanvasContextMenu] = React.useState<any>(undefined)
-  const [backgroundImage,setBackgroundImage] = React.useState<{title: string, file: any}|null>(null)
-const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
+  const [backgroundImage, setBackgroundImage] = React.useState<{ title: string, file: any } | null>(null)
+  const [flickerOn, setFlickerOn] = React.useState<boolean>(true)
 
   const setContextMenu = (menu: any) => {
     setCanvasContextMenu(menu)
   }
 
-  const addNewDesignElement = () => {
+  const setDesignElement = (designElement: DesignElementType) => {
+    // set(designElement.size.height)
+    // setWidth(designElement.size.width)
+    setText(designElement.text)
+    setFontFace(designElement.fontFace)
+    setFontSize(designElement.fontSize)
+    setFlickerStyle(designElement.flickerStyle)
+    setFlickerOn(designElement.flickerOn)
+    setColor(designElement.color)
+  }
+
+  const addNewDesignElement = (designElement?: DesignElementType) => {
+
     const newDesignElement: DesignElementType = {
-      size: {height: 250, width: 250},
-      text: text,
-      fontSize: fontSize,
-      fontFace: fontFace,
-      flickerStyle: flickerStyle,
-      flickerOn: flickerOn,
-      color: color
+      size: {height: designElement?.size.height ?? 250, width: designElement?.size.width ?? 250},
+      text: designElement?.text ?? text,
+      fontSize: designElement?.fontSize ?? fontSize,
+      fontFace: designElement?.fontFace ?? fontFace,
+      flickerStyle: designElement?.flickerStyle ?? flickerStyle,
+      flickerOn: designElement?.flickerOn ?? flickerOn,
+      color: designElement?.color ?? color
     }
 
     setInProgressDesign((state) => ({...state, elements: state.elements.concat(newDesignElement)}))
@@ -303,9 +316,7 @@ const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
     <Grid container style={{width: '100vw', height: '100vh - 80px'}}>
       <Grid item>
         <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-
-          </Toolbar>
+          <Toolbar/>
         </AppBar>
       </Grid>
       <Grid item>
@@ -316,7 +327,7 @@ const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
             paper: classes.drawerPaper
           }}
         >
-          <Grid container alignItems="stretch">
+          <Grid container alignItems="stretch" wrap="nowrap">
             <Grid item style={{height: `calc(100vh)`}}>
               <Toolbar/>
               <Tabs
@@ -346,8 +357,8 @@ const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
                   label={<Grid container direction="column" alignItems="center">
                     <Grid item><Star style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
                                      fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 2 ? iconOnColor : iconColor}} variant="h6">Clip
-                      Arts</Typography></Grid>
+                    <Grid item><Typography style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
+                                           variant="h6">Icons</Typography></Grid>
                   </Grid>} {...a11yProps(2)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
@@ -375,23 +386,24 @@ const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
             <Grid item style={{backgroundColor: selectedTabContentBg, flexGrow: 2, color: selectedTabContentColor}}>
               <Toolbar/>
               <TabPanel value={menuChoice} index={0}>
-                <Typography>Backgrounds</Typography>
-                <Grid item>
+                <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>Add Background</Typography>
+                <Grid item container spacing={1}>
                   {
-                    backgrounds.map((background) => {
-
-                      return <Grid item xs={12} onClick={(e:any)=>{
+                    backgrounds.map((background, index: number) => {
+                      return <Grid key={index} item xs={12} onClick={() => {
                         setBackgroundImage(background)
                       }}>
-                        <Grid item container alignItems="center" justifyContent="center" style={{
+                        <Card style={{
                           height: '100px',
                           width: '100%',
                           backgroundImage: `url(${background.file})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center'
                         }}>
-                          <Typography variant="h5" color="textPrimary">{background.title}</Typography>
-                        </Grid>
+                          <CardContent>
+                          <Typography variant="h2" color="textPrimary" style={{textAlign:"center"}}>{background.title}</Typography>
+                          </CardContent>
+                        </Card>
                       </Grid>
                     })
                   }
@@ -399,155 +411,39 @@ const [flickerOn,setFlickerOn] = React.useState<boolean>(true)
               </TabPanel>
               <TabPanel value={menuChoice} index={1}>
                 <Grid item>
-                  <Typography variant="h6" color="secondary">New Text</Typography>
+                  <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>New Text</Typography>
                 </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-                  <Grid item container>
-                    <TextField
-                      fullWidth
-                      label={<Typography variant="h3" color="secondary">Text:</Typography>}
-                      inputProps={{className: classes.textField}}
-                      value={text}
-                      onChange={(event) => setText(event.target.value)}
-                      color="secondary"/>
-                  </Grid>
-                </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-                  <Grid item container>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label"><Typography variant="h3"
-                                                                                   color="secondary">Font:</Typography></InputLabel>
-                      <Select
-                        fullWidth
-                        color="secondary"
-                        value={fontFace}
-                        inputProps={{className: classes.textField}}
-                        MenuProps={{classes: {paper: classes.menuPaper}}}
-                        onChange={(e) => setFontFace(e.target.value as string)}
-                      >
-                        {
-                          Object.keys(fonts).map((fontKey, index) => {
-                            return <MenuItem key={index} value={fontKey}><Typography variant="h6"
-                            >{fontKey}</Typography></MenuItem>
-                          })
-                        }
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-                  <Grid item container>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label"><Typography variant="h3"
-                                                                                   color="secondary">Size:</Typography></InputLabel>
-
-                      <Select
-                        fullWidth
-                        color="secondary"
-                        value={fontSize}
-                        inputProps={{className: classes.textField}}
-                        MenuProps={{classes: {paper: classes.menuPaper}}}
-                        onChange={(e) => setFontSize(e.target.value as number)}
-                      >
-                        {
-                          [1, 2, 3, 4, 5, 6, 7, 8].map((fontSize, index) => {
-                            return <MenuItem key={index} value={fontSize}><Typography variant="h6"
-                            >{fontSize}</Typography></MenuItem>
-                          })
-                        }
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-                  <Grid item container>
-                    <FormControl fullWidth>
-                      <InputLabel
-                        id="demo-simple-select-helper-label">
-                        <Typography
-                          variant="h3"
-                          color="secondary">
-                          Color:
-                        </Typography>
-                      </InputLabel>
-                      <Select
-                        fullWidth
-                        color="secondary"
-                        value={color}
-                        inputProps={{className: classes.textField}}
-                        MenuProps={{classes: {paper: classes.menuPaper}}}
-                        onChange={(e) => setColor(e.target.value as string)}
-                      >
-                        {
-                          Object.keys(colors).map((colorKey, index) => {
-                            return <MenuItem key={index} value={colorKey}>
-                              <Grid item style={{
-                                width: 24,
-                                height: 24,
-                                backgroundColor: colors[colorKey]
-                              }}/>
-                            </MenuItem>
-                          })
-                        }
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid container item wrap="nowrap" alignItems="center" justifyContent="center" spacing={1}>
-                  <Grid item container>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-helper-label">
-                        <Typography
-                          variant="h3"
-                          color="secondary">Flicker:</Typography>
-                      </InputLabel>
-                      <Select
-                        fullWidth
-                        color="secondary"
-                        value={flickerStyle}
-                        MenuProps={{classes: {paper: classes.menuPaper}}}
-                        inputProps={{className: classes.textField}}
-                        onChange={(e) => setFlickerStyle(e.target.value as string)}
-                      >
-                        {
-                          ['BASIC', 'PULSATE', 'SUBTLE'].map((flickerKey, index) => {
-                            return <MenuItem key={index} value={flickerKey}><Typography
-                              variant="h6">{flickerKey}</Typography></MenuItem>
-                          })
-                        }
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item container>
-                    <FormControl fullWidth>
-                      <Switch
-                        checked={flickerOn}
-                        onChange={(e)=> setFlickerOn(e.target.value === 'true')}
-                        color="secondary"
-                        name="flickerOn"
-                      />
-                    </FormControl>
-                  </Grid>
-                </Grid>
-                <Grid
-                  container
-                  item
-                  wrap="nowrap"
-                  alignItems="center"
-                  justifyContent="center"
-                  spacing={1}>
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      onClick={() => addNewDesignElement()}>
-                      <Typography>
-                        Add New Text</Typography>
-                    </Button>
-                  </Grid>
+                <DesignElementContextMenu
+                  designElement={INITIAL_DESIGN_ELEMENT}
+                  addDesignElement={(designElement) => addNewDesignElement(designElement)}
+                  setDesignElement={setDesignElement}/>
+                <Grid container item xs={12}>
+                  {
+                    allFontFaces.map((fontFace: any, index: number) => {
+                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1,1)}}>
+                        <Card style={{backgroundColor: NeonTheme.palette.background.default, padding: NeonTheme.spacing(2, 1)}}>
+                          <FontFaceSample fontFace={fontFace}
+                                      addDesignElement={(design: DesignElementType) => addNewDesignElement(design)}/>
+                        </Card>
+                      </Grid>
+                    })
+                  }
                 </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={2}>
-                Clip Arts
+                <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>Icons</Typography>
+                <Grid container item xs={12}>
+                  {
+                    iconFonts.map((iconFont: any, index: number) => {
+                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1,1)}}>
+                        <Card style={{backgroundColor: NeonTheme.palette.background.default, padding: NeonTheme.spacing(2, 1)}}>
+                          <FontSample fontFace={iconFont}
+                                      addDesignElement={(design: DesignElementType) => addNewDesignElement(design)}/>
+                        </Card>
+                      </Grid>
+                    })
+                  }
+                </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={3}>
                 Photos

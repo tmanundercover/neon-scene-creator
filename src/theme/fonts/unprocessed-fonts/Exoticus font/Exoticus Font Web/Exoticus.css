@@ -1,9 +1,0 @@
-@font-face {
-    font-family: 'Exoticus';
-    src: url('fonts/Exoticus.eot');
-    src: url('fonts/Exoticus.eot') format('embedded-opentype'),
-         url('fonts/Exoticus.woff2') format('woff2'),
-         url('fonts/Exoticus.woff') format('woff'),
-         url('fonts/Exoticus.ttf') format('truetype'),
-         url('fonts/Exoticus.svg#Exoticus') format('svg');
-}

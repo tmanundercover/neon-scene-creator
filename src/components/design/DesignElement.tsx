@@ -1,7 +1,7 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
 import {Grid, Typography} from '@material-ui/core'
-import NeonTheme, {fonts} from '../../theme/Theme'
+import NeonTheme, {FontFace, fonts, NeonYellowRoseBlueHex} from '../../theme/Theme'
 import {motion, useAnimation} from 'framer-motion'
 import {DesignElementType} from '../Canvas'
 import DesignElementContextMenu from './DesignElementContextMenu'
@@ -74,7 +74,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
   const [height, setHeight] = React.useState<number>(props.design?.size.height ?? 250)
   const [width, setWidth] = React.useState<number>(props.design?.size.width ?? 250)
   const [text, setText] = React.useState<string>(props.design?.text ?? 'New Text')
-  const [fontFace, setFontFace] = React.useState<string>(props.design?.fontFace ?? 'Barbaro')
+  const [fontFace, setFontFace] = React.useState<FontFace>(props.design?.fontFace ?? fonts[0])
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.design?.flickerStyle ?? 'pulsate')
   const [color, setColor] = React.useState<string>(props.design?.color ?? 'green')
@@ -184,7 +184,8 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
 
               setContextMenu(<DesignElementContextMenu
                 key={text + width + height + fontFace + flickerStyle + color + fontSize}
-                {...designElement}
+                color={NeonYellowRoseBlueHex}
+                designElement={designElement}
                 setDesignElement={setDesignElement}
               />)
             }}
@@ -197,7 +198,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
             container
             item>
             <Typography className={flickerOn?flickers[flickerStyle].neonText: ''}
-                        style={{...fonts[fontFace], fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
+                        style={{...fontFace, fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
           </Grid>
         </Grid>
       </Grid>
