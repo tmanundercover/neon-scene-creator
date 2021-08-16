@@ -1,16 +1,9 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import NeonTheme, {
-  allFontFaces,
-  getFontFace,
-  getIconFont,
-  iconFonts,
-  NeonAquaHex,
-  NeonFuchsiaHex, NeonYellowRoseBlueHex
-} from '../../theme/Theme'
+import NeonTheme, {NeonFuchsiaHex} from '../../theme/Theme'
 import {Grid, Typography} from '@material-ui/core'
 import {ArrowLeft, ArrowRight} from '@material-ui/icons'
-import {DesignElementType} from '../Canvas'
+import {DesignElementType, DesignElementTypesEnum} from '../Canvas'
 
 export const useStyles = makeStyles((theme: Theme) => ({
   arrows: {
@@ -22,6 +15,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 export type FontSampleProps = {
+  layer?: number
   fontFace?: any
   addDesignElement(iconDesignElement: DesignElementType): void
 }
@@ -57,7 +51,9 @@ const FontSample: FunctionComponent<FontSampleProps> = (props) => {
       fontFace: props.fontFace,
       flickerOn: false,
       flickerStyle: 'PULSATE',
-      color: 'green'
+      color: 'green',
+      layer: props.layer ?? 0,
+      type: DesignElementTypesEnum.ICON
     }
 
     console.log("about to add this element", iconDesignElement)

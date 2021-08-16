@@ -1,27 +1,20 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import NeonTheme, {
-  allFontFaces,
-  getFontFace,
-  getIconFont,
-  iconFonts,
-  NeonAquaHex,
-  NeonFuchsiaHex, NeonYellowRoseBlueHex
-} from '../../theme/Theme'
+import NeonTheme, {NeonFuchsiaHex} from '../../theme/Theme'
 import {Grid, Typography} from '@material-ui/core'
-import {ArrowLeft, ArrowRight} from '@material-ui/icons'
-import {DesignElementType} from '../Canvas'
+import {DesignElementType, DesignElementTypesEnum} from '../Canvas'
 
 export const useStyles = makeStyles((theme: Theme) => ({
   arrows: {
-      color: NeonFuchsiaHex,
-    "&:hover":{
-      color: "#FAFAFA !important"
+    color: NeonFuchsiaHex,
+    '&:hover': {
+      color: '#FAFAFA !important'
     }
   }
 }))
 
 export type FontFaceSampleProps = {
+  layer?: number
   fontFace?: any
   addDesignElement(iconDesignElement: DesignElementType): void
 }
@@ -33,59 +26,48 @@ const FontFaceSample: FunctionComponent<FontFaceSampleProps> = (props) => {
 
   const characterString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890;!@#$%^&*()_+'
 
-  const incLetter = () => {
-    if (currentLetter < characterString.length) {
-      setCurrentLetter(currentLetter + 1)
-    } else {
-      setCurrentLetter(0)
-    }
-  }
-
-  const decLetter = () => {
-    if (currentLetter >= 1) {
-      setCurrentLetter(currentLetter - 1)
-    } else {
-      setCurrentLetter(characterString.length - 1)
-    }
-  }
-
-  const addToDesign = (charStr: string) => {
+  const addToDesign = () => {
     const iconDesignElement: DesignElementType = {
-      size: {height: 80, width: 80},
-      text: charStr,
+      size: {height: 100, width: 120},
+      text: "New Text",
       fontSize: 8,
       fontFace: props.fontFace,
       flickerOn: false,
       flickerStyle: 'PULSATE',
-      color: 'green'
+      color: 'green',
+      layer: props.layer ?? 0,
+      type: DesignElementTypesEnum.TEXT
     }
 
-    console.log("about to add this element", iconDesignElement)
+    console.log('about to add this element', iconDesignElement)
 
     props.addDesignElement(iconDesignElement)
   }
 
   return (
     <Grid item>
-    <Grid container direction="column" item alignItems="center">
-      <Grid item>
-        <Grid item container wrap="nowrap" alignItems="center">
-            <Typography variant="h1" style={{
+      <Grid container direction="column" item alignItems="center">
+        <Grid item>
+          <Grid item container wrap="nowrap" alignItems="center">
+            <Typography
+              onClick={() => addToDesign()}
+              variant="h1"
+                        style={{
               ...props.fontFace,
               textAlign: 'center',
               textTransform: 'none',
               // position: "absolute",
               // visibility: "hidden",
-              height: "auto",
-              width: "auto",
-              whiteSpace: "nowrap"
+              height: 'auto',
+              width: 'auto',
+              whiteSpace: 'nowrap'
             }}>{characterString.charAt(currentLetter)}</Typography>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <Typography variant="h6" style={{textAlign: 'center'}}>{props.fontFace?.fontFamily}</Typography>
         </Grid>
       </Grid>
-      <Grid item>
-        <Typography variant="h6" style={{textAlign: "center"}}>{props.fontFace.fontFamily}</Typography>
-      </Grid>
-    </Grid>
     </Grid>
   )
 }

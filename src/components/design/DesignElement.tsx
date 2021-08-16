@@ -3,16 +3,14 @@ import {makeStyles, Theme} from '@material-ui/core/styles'
 import {Grid, Typography} from '@material-ui/core'
 import NeonTheme, {FontFace, fonts, NeonYellowRoseBlueHex} from '../../theme/Theme'
 import {motion, useAnimation} from 'framer-motion'
-import {DesignElementType} from '../Canvas'
+import {DesignElementType, DesignElementTypesEnum} from '../Canvas'
 import DesignElementContextMenu from './DesignElementContextMenu'
 
 const FONT_MULTIPLIER = 20
 
 export const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    // "&:focus":{
     border: '1px solid #FAFAFA'
-    // }
   },
   designInfoContainer: {
     backgroundColor: theme.palette.background.paper,
@@ -28,18 +26,15 @@ export const useStyles = makeStyles((theme: Theme) => ({
   control: {
     color: theme.palette.text.secondary,
     height: '10px'
-  },
-  menuPaper: {
-    backgroundColor: theme.palette.background.default,
-    border: '1px solid #FAFAFA'
   }
 }))
 
 
 export type DesignElementProps = {
   design?: DesignElementType,
+  setDesignElement(designElement:DesignElementType):void,
   inProgress?: boolean,
-  isSelected: boolean,
+  // isSelected?: boolean,
   setContextMenu(menu: any, setDesignElement: any): any
 }
 
@@ -71,6 +66,8 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     props.setContextMenu(menu, setDesignElement)
   }
 
+
+
   const [height, setHeight] = React.useState<number>(props.design?.size.height ?? 250)
   const [width, setWidth] = React.useState<number>(props.design?.size.width ?? 250)
   const [text, setText] = React.useState<string>(props.design?.text ?? 'New Text')
@@ -79,6 +76,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.design?.flickerStyle ?? 'pulsate')
   const [color, setColor] = React.useState<string>(props.design?.color ?? 'green')
   const [flickerOn,setFlickerOn] = React.useState<boolean>(props.design?.flickerOn ?? false)
+  const [layer,setLayer] = React.useState<number>(props.design?.layer ?? 0)
 
   const setDesignElement = (designElement: DesignElementType) => {
     setHeight(designElement.size.height)
@@ -89,6 +87,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     setFlickerStyle(designElement.flickerStyle)
     setFlickerOn(designElement.flickerOn)
     setColor(designElement.color)
+    setLayer(designElement.layer)
   }
 
 
@@ -164,13 +163,23 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     'SUBTLE': useSubtleFlickerStyles(NeonTheme)
   }
 
+
+
+
+  // React.useEffect(()=>{
+  //   selectThisDesignElement(isSelected)
+  // },[isSelected])
+
+  // React.useEffect(()=>{
+  //   if(props.isSelected) {
+  //
+  //   selectThisDesignElement()
+  //   }
+  // },[props.isSelected])
+
   return (
-    <motion.div
-      dragMomentum={false}
-      drag
-    >
       <Grid container item
-            className={props.isSelected ? classes.root: ''}
+            // className={props.isSelected === true ? classes.root: ''}
             onClick={(e) => {
               const designElement: DesignElementType = {
                 size: {width: width, height: height},
@@ -179,7 +188,9 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
                 flickerStyle: flickerStyle,
                 color: color,
                 flickerOn: flickerOn,
-                fontSize: fontSize
+                fontSize: fontSize,
+                layer: layer,
+                type: DesignElementTypesEnum.TEXT
               }
 
               setContextMenu(<DesignElementContextMenu
@@ -190,6 +201,7 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
               />)
             }}
             style={{
+              // border: `${props.isSelected? '1px solid white': '1px solid black'}`,
               height: `calc(${height} + '1.8em')`,
               width: width + 'px'
             }}>
@@ -202,7 +214,6 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
           </Grid>
         </Grid>
       </Grid>
-    </motion.div>
   )
 }
 

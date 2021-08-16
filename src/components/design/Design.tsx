@@ -1,17 +1,18 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
 import {Grid} from '@material-ui/core'
-import {DesignType} from '../Canvas'
+import {DesignElementType, DesignType} from '../Canvas'
 import DesignElement from './DesignElement'
 import NeonTheme from '../../theme/Theme'
-import discoBall from '../../assets/favpng_disco-ball-stock-photography-nightclub.png'
-
+import {motion} from 'framer-motion'
 
 export type DesignProps = {
   design: DesignType,
   inProgress?: boolean,
   background?: any,
-  setContextMenu(menu:any, setDesignElement:any): any
+  setContextMenu(menu: any, setDesignElement: any): any
+  selectedDesignElements?: number[] | null
+  setDesignElement(designElement: DesignElementType, index: number): void
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,11 +26,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 const Design: FunctionComponent<DesignProps> = (props) => {
-  const classes = useStyles()
+  const classes = useStyles(NeonTheme)
 
-  const [isSelected, setIsSelected] = React.useState<number|null>(null)
+  const [isSelected, setIsSelected] = React.useState<number[]>(props.selectedDesignElements ?? [])
 
+  const select = (index: number) => {
+    console.log('selecting', index)
+    setIsSelected([index])
+  }
 
+  React.useEffect(() => {
+    setIsSelected(props.selectedDesignElements ?? [])
+  }, [props.selectedDesignElements])
 
   return (
     <Grid container item style={{backgroundColor: 'white'}}>
@@ -45,7 +53,22 @@ const Design: FunctionComponent<DesignProps> = (props) => {
         <Grid container item>
           {
             props.design.elements.map((designElement, index) => {
-              return <Grid key={index} item onClick={()=>{ setIsSelected(index) }} ><DesignElement isSelected={isSelected === index} design={designElement} setContextMenu={props.setContextMenu} /></Grid>
+              return <motion.div
+                dragMomentum={false}
+                drag
+              >
+                <Grid
+                  style={{border: isSelected.includes(index) ? '1px solid white' : '1px solid black'}}
+                  key={index}
+                  item
+                  onClick={() => {
+                    select(index)
+                  }}>
+                  <DesignElement
+                    setDesignElement={(designElement: DesignElementType) => props.setDesignElement(designElement, index)}
+                    design={designElement} setContextMenu={props.setContextMenu}/>
+                </Grid>
+              </motion.div>
             })
           }
         </Grid>

@@ -1,6 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import {AppBar, Box, Card, CardContent, Drawer, Grid, Tab, Tabs, Toolbar, Typography} from '@material-ui/core'
+import {AppBar, Box, Button, Card, CardContent, Drawer, Grid, Tab, Tabs, Toolbar, Typography} from '@material-ui/core'
 import NeonTheme, {
   allFontFaces,
   FontFace,
@@ -13,9 +13,7 @@ import NeonTheme, {
   NeonGreenHex,
   NeonYellowRoseBlueHex
 } from '../theme/Theme'
-import {Dashboard, Layers, MenuBook, Photo, Star, TextFields} from '@material-ui/icons'
-import Design from './design/Design'
-import Preview from './design/ruler/Preview'
+import {Dashboard, Layers, MenuBook, Star, TextFields} from '@material-ui/icons'
 import galaxy1 from '../assets/backgrounds/galaxy/2474215.jpg'
 import galaxy2 from '../assets/backgrounds/galaxy/2474216.jpg'
 import galaxy3 from '../assets/backgrounds/galaxy/5517472.jpg'
@@ -25,6 +23,8 @@ import brick3 from '../assets/backgrounds/brick/1858126.jpg'
 import FontSample from './icon-fonts/FontSample'
 import DesignElementContextMenu from './design/DesignElementContextMenu'
 import FontFaceSample from './design/FontFaceSample'
+import Preview from './design/ruler/Preview'
+import Design from './design/Design'
 
 const drawerWidth = 590
 const rulerWidth = 40
@@ -73,83 +73,19 @@ export const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-// .ruler {
-//   position: relative;
-//   list-style: none;
-//   margin: 0;
-//   padding: 0;
-//   overflow: hidden;
-//
-//   &__background {
-//     position: absolute;
-//     left:0; width:100%;
-//     height: 50%;
-//
-//     bottom: 0; // top, when inverted;
-//   }
-//
-//   &__item {
-//     display: block;
-//     position: absolute;
-//     left:0;
-//     top:50%;
-//     transform: translate(-50%,-50%);
-//     margin: -2px 0 0 -1px;
-//     color: #444;
-//
-//     &:before {
-//       content: "";
-//       position: absolute;
-//       left:50%; top: 100%;
-//       width: 1px; height: 100vh;
-//       background: currentColor;
-//     }
-//
-//     &:hover {
-//       color: blue;
-//     }
-//     // move the pointer line into the button to avoid focus-within
-//     &:focus-within {
-//       button { box-shadow: 0 0 0 2px rgba(0,0,255, 0.3); }
-//     }
-//   }
-// }
-//
-// .button {
-//   outline: none;
-//   border: none;
-//   border: 1px solid;
-//   // color: white;
-//   border-radius: 4px;
-//   padding: 1px 2px 2px;
-//   line-height: 1;
-//   color: currentColor;
-//   font-weight: 700;
-//   background-color: white;
-//   font-size: 10px;
-//
-//   &:hover {
-//     // background: darkgray;
-//   }
-//   // transform: rotate(90deg)
-// }
 
 export type CanvasProps = {}
-
-
-// export type InProgressDesignType = {
-//   title?: string,
-//   font?: string,
-//   text?: string,
-//   width: number,
-//   height: number
-// }
 
 export type DesignType = {
   title: string,
   width: number,
   height: number,
   elements: DesignElementType[]
+}
+
+export enum DesignElementTypesEnum {
+  ICON,
+  TEXT
 }
 
 
@@ -161,21 +97,15 @@ export type DesignElementType = {
   flickerOn: boolean,
   flickerStyle: 'PULSATE' | 'SUBTLE' | 'BASIC' | string,
   color: 'green' | 'fuchsia' | 'yellow' | 'blue' | 'violet' | string
+  layer: number,
+  type: DesignElementTypesEnum
 }
 
 const INITIAL_DESIGN = {
   title: 'New Design',
   width: 250,
   height: 250,
-  elements: [{
-    fontSize: 4,
-    size: {height: 250, width: 250},
-    text: 'New Text',
-    fontFace: allFontFaces[0],
-    flickerStyle: 'PULSATE',
-    flickerOn: true,
-    color: 'green'
-  }]
+  elements: []
 }
 
 const INITIAL_DESIGN_ELEMENT: DesignElementType = {
@@ -185,7 +115,9 @@ const INITIAL_DESIGN_ELEMENT: DesignElementType = {
   fontFace: allFontFaces[0],
   flickerStyle: 'PULSATE',
   flickerOn: true,
-  color: 'green'
+  color: 'green',
+  layer: 0,
+  type: DesignElementTypesEnum.TEXT
 }
 
 interface TabPanelProps {
@@ -271,24 +203,49 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
   const [contextCanvasMenu, setCanvasContextMenu] = React.useState<any>(undefined)
   const [backgroundImage, setBackgroundImage] = React.useState<{ title: string, file: any } | null>(null)
   const [flickerOn, setFlickerOn] = React.useState<boolean>(true)
+  const [selectedDesignElements, setSelectedDesignElements] = React.useState<number[]>([])
+  const [maxLayer, setMaxLayer] = React.useState<number>(0)
+  const [layers, setLayers] = React.useState<number[][]>([])
 
   const setContextMenu = (menu: any) => {
     setCanvasContextMenu(menu)
   }
 
-  const setDesignElement = (designElement: DesignElementType) => {
-    // set(designElement.size.height)
-    // setWidth(designElement.size.width)
-    setText(designElement.text)
-    setFontFace(designElement.fontFace)
-    setFontSize(designElement.fontSize)
-    setFlickerStyle(designElement.flickerStyle)
-    setFlickerOn(designElement.flickerOn)
-    setColor(designElement.color)
+  const setDesignElement = (designElement: DesignElementType, index: number) => {
+    setInProgressDesign(state => ({
+      ...state,
+      elements: {
+        ...state.elements,
+        [index]: designElement
+      }
+    }))
+  }
+
+  React.useEffect(() => {
+    getLayers(inProgressDesign.elements)
+  }, [inProgressDesign.elements, inProgressDesign])
+
+  const getLayers = (designElements: DesignElementType[]) => {
+    let newLayers = []
+
+    for (let z = 0; z <= maxLayer; z++) {
+      let thisLayerElementNumbers: number[] = []
+      const thisLayerElements = designElements.filter((designElement: DesignElementType, index) => {
+        console.log('layer', designElement.layer)
+        if (designElement.layer === z) {
+          thisLayerElementNumbers.push(index)
+        }
+        return designElement.layer === z
+      })
+
+      console.log('the organized by layer array: ', z, thisLayerElements)
+      newLayers.push(thisLayerElementNumbers)
+    }
+
+    setLayers(newLayers)
   }
 
   const addNewDesignElement = (designElement?: DesignElementType) => {
-
     const newDesignElement: DesignElementType = {
       size: {height: designElement?.size.height ?? 250, width: designElement?.size.width ?? 250},
       text: designElement?.text ?? text,
@@ -296,7 +253,9 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
       fontFace: designElement?.fontFace ?? fontFace,
       flickerStyle: designElement?.flickerStyle ?? flickerStyle,
       flickerOn: designElement?.flickerOn ?? flickerOn,
-      color: designElement?.color ?? color
+      color: designElement?.color ?? color,
+      layer: designElement?.layer ?? maxLayer,
+      type: designElement?.type ?? DesignElementTypesEnum.TEXT
     }
 
     setInProgressDesign((state) => ({...state, elements: state.elements.concat(newDesignElement)}))
@@ -362,31 +321,24 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   </Grid>} {...a11yProps(2)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Photo style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
-                                      fontSize="large"/></Grid>
+                    <Grid item><Dashboard style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
+                                          fontSize="large"/></Grid>
                     <Grid item><Typography style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
-                                           variant="h6">Photos</Typography></Grid>
+                                           variant="h6">Elements</Typography></Grid>
                   </Grid>} {...a11yProps(3)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Dashboard style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
-                                          fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
-                                           variant="h6">Elements</Typography></Grid>
-                  </Grid>} {...a11yProps(4)} />
-                <Tab
-                  label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Layers style={{color: menuChoice === 5 ? iconOnColor : iconColor}}
+                    <Grid item><Layers style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
                                        fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 5 ? iconOnColor : iconColor}}
+                    <Grid item><Typography style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
                                            variant="h6">Layers</Typography></Grid>
-                  </Grid>} {...a11yProps(5)} />
+                  </Grid>} {...a11yProps(4)} />
               </Tabs>
             </Grid>
             <Grid item style={{backgroundColor: selectedTabContentBg, flexGrow: 2, color: selectedTabContentColor}}>
               <Toolbar/>
               <TabPanel value={menuChoice} index={0}>
-                <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>Add Background</Typography>
+                <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Add Background</Typography>
                 <Grid item container spacing={1}>
                   {
                     backgrounds.map((background, index: number) => {
@@ -401,7 +353,8 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                           backgroundPosition: 'center'
                         }}>
                           <CardContent>
-                          <Typography variant="h2" color="textPrimary" style={{textAlign:"center"}}>{background.title}</Typography>
+                            <Typography variant="h2" color="textPrimary"
+                                        style={{textAlign: 'center'}}>{background.title}</Typography>
                           </CardContent>
                         </Card>
                       </Grid>
@@ -411,19 +364,26 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
               </TabPanel>
               <TabPanel value={menuChoice} index={1}>
                 <Grid item>
-                  <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>New Text</Typography>
+                  <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>New Text</Typography>
                 </Grid>
-                <DesignElementContextMenu
-                  designElement={INITIAL_DESIGN_ELEMENT}
-                  addDesignElement={(designElement) => addNewDesignElement(designElement)}
-                  setDesignElement={setDesignElement}/>
+                <Grid container>
+                  <DesignElementContextMenu
+                    designElement={INITIAL_DESIGN_ELEMENT}
+                    addDesignElement={(designElement) => addNewDesignElement(designElement)}
+                  />
+                </Grid>
                 <Grid container item xs={12}>
                   {
-                    allFontFaces.map((fontFace: any, index: number) => {
-                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1,1)}}>
-                        <Card style={{backgroundColor: NeonTheme.palette.background.default, padding: NeonTheme.spacing(2, 1)}}>
-                          <FontFaceSample fontFace={fontFace}
-                                      addDesignElement={(design: DesignElementType) => addNewDesignElement(design)}/>
+                    allFontFaces.map((fontFaceZ: any, index: number) => {
+                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1, 1)}}>
+                        <Card
+                          style={{
+                            backgroundColor: NeonTheme.palette.background.default,
+                            padding: NeonTheme.spacing(2, 1)
+                          }}>
+                          <FontFaceSample fontFace={fontFaceZ}
+                                          layer={maxLayer}
+                                          addDesignElement={(design: DesignElementType) => addNewDesignElement(design)}/>
                         </Card>
                       </Grid>
                     })
@@ -431,13 +391,17 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={2}>
-                <Typography variant="h2" color="secondary" style={{textAlign:"right"}}>Icons</Typography>
+                <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Icons</Typography>
                 <Grid container item xs={12}>
                   {
                     iconFonts.map((iconFont: any, index: number) => {
-                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1,1)}}>
-                        <Card style={{backgroundColor: NeonTheme.palette.background.default, padding: NeonTheme.spacing(2, 1)}}>
+                      return <Grid item key={index} xs={6} style={{padding: NeonTheme.spacing(1, 1)}}>
+                        <Card style={{
+                          backgroundColor: NeonTheme.palette.background.default,
+                          padding: NeonTheme.spacing(2, 1)
+                        }}>
                           <FontSample fontFace={iconFont}
+                                      layer={maxLayer}
                                       addDesignElement={(design: DesignElementType) => addNewDesignElement(design)}/>
                         </Card>
                       </Grid>
@@ -446,13 +410,72 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={3}>
-                Photos
+                <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Display Elements</Typography>
+                <Grid item container spacing={1}>
+                  {
+                    inProgressDesign.elements.map((designElement: DesignElementType, index: number) => {
+                      return <Grid item key={index} xs={12} style={{padding: NeonTheme.spacing(1, 1)}}>
+                        <Card onClick={() => {
+                          setSelectedDesignElements([index])
+                        }} style={{
+                          backgroundColor: !selectedDesignElements.includes(index) ? NeonTheme.palette.background.default : NeonTheme.palette.primary.main,
+                          padding: NeonTheme.spacing(2, 1)
+                        }}>
+                          <Typography variant="h6"
+                                      color={selectedDesignElements.includes(index) ? 'secondary' : 'textPrimary'}>{designElement.text}</Typography>
+                        </Card>
+                      </Grid>
+                    })
+                  }
+                </Grid>
               </TabPanel>
               <TabPanel value={menuChoice} index={4}>
-                Elements
-              </TabPanel>
-              <TabPanel value={menuChoice} index={5}>
-                Layers
+                <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Layers</Typography>
+                <Grid item container spacing={1}>
+                  {
+                    layers.map((layer: number[], layerIndex) => {
+                      return <Grid container item>
+                        <Card
+                          style={{
+                            backgroundColor: NeonTheme.palette.background.default,
+                            width: "100%",
+                            padding: NeonTheme.spacing(0, 3)
+                          }}>
+                          <Grid container>
+                            <Grid item xs={2}>
+                              <Button  onClick={
+                                () => {
+                                  console.log('the layers to add', layer, selectedDesignElements)
+                                  setSelectedDesignElements([...layer])
+                                  // setDesignElement(inProgressDesign.elements[layer[0]], layer[0])
+                                }
+                              }><Typography variant="h1" color="secondary">{layerIndex}:</Typography></Button>
+                            </Grid>
+                            <Grid container item xs={10} wrap="nowrap" alignItems="center" spacing={1}>
+                              {
+                                layer.map((designElementIndex: number, index, des) => {
+                                  console.log('all elements in this cycle', designElementIndex, index, des)
+                                  return <Grid
+
+                                    item
+                                    container
+                                    justifyContent="center"
+                                    alignItems="center">
+                                    <Button color={selectedDesignElements.includes(designElementIndex)?"secondary":undefined} onClick={() => {
+                                      setSelectedDesignElements([designElementIndex])
+                                    }}
+                                            style={{border: selectedDesignElements.includes(designElementIndex)?'1px solid '+ NeonTheme.palette.secondary.main:'1px solid white', width: 50, height: 50}}
+                                            variant="outlined">{inProgressDesign.elements[designElementIndex].type === DesignElementTypesEnum.TEXT ?
+                                      <TextFields/> : <Star/>}</Button></Grid>
+                                })
+                              }
+                            </Grid>
+                          </Grid>
+                        </Card>
+                      </Grid>
+                    })
+                  }
+                </Grid>
               </TabPanel>
             </Grid>
           </Grid>
@@ -490,6 +513,8 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                     backgroundColor: 'black'
                   }}>
                   <Design
+                    setDesignElement={setDesignElement}
+                    selectedDesignElements={selectedDesignElements}
                     background={backgroundImage}
                     design={inProgressDesign}
                     setContextMenu={setContextMenu}/>
