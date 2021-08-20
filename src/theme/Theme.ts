@@ -1,4 +1,4 @@
-import {createTheme, responsiveFontSizes} from '@material-ui/core'
+import {unstable_createMuiStrictModeTheme as createTheme, responsiveFontSizes} from '@material-ui/core'
 import NeonFontFile from './fonts/neon-font/Neon.ttf'
 import KlaxonsFontFile from './fonts/Klaxons.otf'
 import NeoNeonFontFile from './fonts/Neoneon.otf'
@@ -230,6 +230,26 @@ export const allFontFaces: FontFace[] = [
     src: `
     local('Stencil'),
     url(${stencilFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Helena Regular',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Helena Regular'),
+    url(${helenaFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Birchwood',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Birchwood'),
+    url(${birchwoodFont}) format('truetype')
   `
   },
   {
@@ -1032,6 +1052,10 @@ export const NeonYellowRoseBlueHex = '#FFF100'
 export const NeonElectricVioletHex = '#9600FF'
 export const NeonAquaHex = '#00F5FB'
 
+export const FacebookBlue = '#1877f2'
+export const TwitterBlue = '#1da1f2'
+export const InstagramMagenta = '#c32aa3'
+export const PinterestRed = '#bd081c'
 
 const NeonTheme = responsiveFontSizes(
   createTheme({
@@ -1164,8 +1188,12 @@ const NeonTheme = responsiveFontSizes(
         '@global': {
           '@font-face': allFontFaces
         }
+      },
+      MuiToolbar: {
+       regular: {
+         minHeight: '92px !important'
+       }
       }
-
     }
   })
 )

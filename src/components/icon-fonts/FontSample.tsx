@@ -53,7 +53,9 @@ const FontSample: FunctionComponent<FontSampleProps> = (props) => {
       flickerStyle: 'PULSATE',
       color: 'green',
       layer: props.layer ?? 0,
-      type: DesignElementTypesEnum.ICON
+      type: DesignElementTypesEnum.ICON,
+      x: 0,
+      y: 0
     }
 
     console.log("about to add this element", iconDesignElement)

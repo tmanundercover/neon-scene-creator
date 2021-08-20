@@ -66,8 +66,6 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     props.setContextMenu(menu, setDesignElement)
   }
 
-
-
   const [height, setHeight] = React.useState<number>(props.design?.size.height ?? 250)
   const [width, setWidth] = React.useState<number>(props.design?.size.width ?? 250)
   const [text, setText] = React.useState<string>(props.design?.text ?? 'New Text')
@@ -163,20 +161,6 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
     'SUBTLE': useSubtleFlickerStyles(NeonTheme)
   }
 
-
-
-
-  // React.useEffect(()=>{
-  //   selectThisDesignElement(isSelected)
-  // },[isSelected])
-
-  // React.useEffect(()=>{
-  //   if(props.isSelected) {
-  //
-  //   selectThisDesignElement()
-  //   }
-  // },[props.isSelected])
-
   return (
       <Grid container item
             // className={props.isSelected === true ? classes.root: ''}
@@ -190,7 +174,9 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
                 flickerOn: flickerOn,
                 fontSize: fontSize,
                 layer: layer,
-                type: DesignElementTypesEnum.TEXT
+                type: DesignElementTypesEnum.TEXT,
+                x: props.design?.x ?? 0,
+                y: props.design?.y ?? 0
               }
 
               setContextMenu(<DesignElementContextMenu
@@ -203,7 +189,8 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
             style={{
               // border: `${props.isSelected? '1px solid white': '1px solid black'}`,
               height: `calc(${height} + '1.8em')`,
-              width: width + 'px'
+              width: width + 'px',
+              position: 'relative'
             }}>
         <Grid container item>
           <Grid
@@ -211,6 +198,14 @@ const DesignElement: FunctionComponent<DesignElementProps> = (props) => {
             item>
             <Typography className={flickerOn?flickers[flickerStyle].neonText: ''}
                         style={{...fontFace, fontSize: `${fontSize * FONT_MULTIPLIER}px`}}>{text}</Typography>
+          </Grid>
+        </Grid>
+        <Grid  container item style={{position: 'absolute', bottom:0, right: 0, padding: NeonTheme.spacing(0, 2) }} justifyContent="space-between">
+          <Grid item>
+            <Typography variant="subtitle1">X: {Math.round(props.design?.x ?? 0)}</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle1">Y: {Math.round(props.design?.y ?? 0)}</Typography>
           </Grid>
         </Grid>
       </Grid>

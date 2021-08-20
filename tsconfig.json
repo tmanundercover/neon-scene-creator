@@ -22,6 +22,7 @@
   },
   "include": [
     "src",
-    "global.d.ts"
+    "global.d.ts",
+    "node_modules/firebase/index.d.ts"
   ]
 }

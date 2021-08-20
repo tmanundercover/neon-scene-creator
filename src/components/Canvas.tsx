@@ -1,6 +1,20 @@
 import React, {FunctionComponent} from 'react'
+import {useLocation} from 'react-router-dom'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import {AppBar, Box, Button, Card, CardContent, Drawer, Grid, Tab, Tabs, Toolbar, Typography} from '@material-ui/core'
+import {
+  AppBar,
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Drawer,
+  Grid,
+  Tab,
+  Tabs,
+  Toolbar,
+  Typography
+} from '@material-ui/core'
 import NeonTheme, {
   allFontFaces,
   FontFace,
@@ -13,7 +27,7 @@ import NeonTheme, {
   NeonGreenHex,
   NeonYellowRoseBlueHex
 } from '../theme/Theme'
-import {Dashboard, Layers, MenuBook, Star, TextFields} from '@material-ui/icons'
+import {Bookmarks, Dashboard, Layers, MenuBook, Star, TextFields} from '@material-ui/icons'
 import galaxy1 from '../assets/backgrounds/galaxy/2474215.jpg'
 import galaxy2 from '../assets/backgrounds/galaxy/2474216.jpg'
 import galaxy3 from '../assets/backgrounds/galaxy/5517472.jpg'
@@ -25,6 +39,10 @@ import DesignElementContextMenu from './design/DesignElementContextMenu'
 import FontFaceSample from './design/FontFaceSample'
 import Preview from './design/ruler/Preview'
 import Design from './design/Design'
+import HeaderMenu from './header/Header'
+import FirebaseAnalyticsClient from '../clients/FirebaseAnalyticsClient'
+import FirebaseClient from '../clients/FirebaseClient'
+import FirebaseFirestoreClient from '../clients/FirebaseFirestoreClient'
 
 const drawerWidth = 590
 const rulerWidth = 40
@@ -91,6 +109,8 @@ export enum DesignElementTypesEnum {
 
 export type DesignElementType = {
   size: { height: number, width: number },
+  x: number,
+  y: number,
   text: string,
   fontSize: number,
   fontFace: FontFace,
@@ -110,6 +130,8 @@ const INITIAL_DESIGN = {
 
 const INITIAL_DESIGN_ELEMENT: DesignElementType = {
   fontSize: 4,
+  x: 0,
+  y: 0,
   size: {height: 250, width: 250},
   text: 'New Text',
   fontFace: allFontFaces[0],
@@ -189,12 +211,20 @@ export const colors: { [key: string]: string } = {
   'blue': NeonBlueHex
 }
 
+export enum MainMenuEnum {
+  BACKGROUNDS,
+  TEXT,
+  ICONS,
+  ELEMENTS,
+  LAYERS,
+  DESIGNS
+}
+
 const Canvas: FunctionComponent<CanvasProps> = (props) => {
   const classes = useStyles(NeonTheme)
 
   const [inProgressDesign, setInProgressDesign] = React.useState<DesignType>(INITIAL_DESIGN)
-  const [inProgressDesignElement, setInProgressDesignElement] = React.useState<DesignElementType>(INITIAL_DESIGN_ELEMENT)
-  const [menuChoice, setMenuChoice] = React.useState<number>(0)
+  const [menuChoice, setMenuChoice] = React.useState<MainMenuEnum>(MainMenuEnum.BACKGROUNDS)
   const [fontFace, setFontFace] = React.useState<FontFace>(fonts[0])
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [color, setColor] = React.useState<string>('green')
@@ -206,6 +236,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
   const [selectedDesignElements, setSelectedDesignElements] = React.useState<number[]>([])
   const [maxLayer, setMaxLayer] = React.useState<number>(0)
   const [layers, setLayers] = React.useState<number[][]>([])
+  const [savedDesigns, setSavedDesigns] = React.useState<DesignType[]>([])
 
   const setContextMenu = (menu: any) => {
     setCanvasContextMenu(menu)
@@ -220,6 +251,13 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
       }
     }))
   }
+
+  React.useEffect(()=>{
+    FirebaseFirestoreClient.getDesigns().then((savedDesigns:DesignType[])=>{
+      console.log("Saved Designs Retrieved: ", savedDesigns)
+      setSavedDesigns(savedDesigns)
+    })
+  },[])
 
   React.useEffect(() => {
     getLayers(inProgressDesign.elements)
@@ -255,7 +293,9 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
       flickerOn: designElement?.flickerOn ?? flickerOn,
       color: designElement?.color ?? color,
       layer: designElement?.layer ?? maxLayer,
-      type: designElement?.type ?? DesignElementTypesEnum.TEXT
+      type: designElement?.type ?? DesignElementTypesEnum.TEXT,
+      x: designElement?.x ?? 0,
+      y: designElement?.x ?? 0
     }
 
     setInProgressDesign((state) => ({...state, elements: state.elements.concat(newDesignElement)}))
@@ -264,6 +304,38 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
   React.useEffect(() => {
     console.log('inprogress desig', inProgressDesign)
   }, [inProgressDesign])
+  const location = useLocation()
+
+  React.useEffect(() => {
+    let title = ''
+
+    switch (menuChoice) {
+      case MainMenuEnum.BACKGROUNDS:
+        title = 'NEON Backgrounds'
+        break
+      case MainMenuEnum.TEXT:
+        title = 'NEON Text'
+        break
+      case MainMenuEnum.ICONS:
+        title = 'NEON Icons'
+        break
+      case MainMenuEnum.ELEMENTS:
+        title = 'NEON Elements'
+        break
+      case MainMenuEnum.LAYERS:
+        title = 'NEON Layers'
+        break
+      case MainMenuEnum.DESIGNS:
+        title = 'NEON Designs'
+        break
+      default:
+        title = 'UNKNOWN TITLE'
+    }
+
+    document.title = `Neon Scene Creator | ${title}`
+
+    FirebaseAnalyticsClient.analyticsPageView(location.pathname + '/' + title, title)
+  }, [menuChoice])
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setMenuChoice(newValue)
@@ -275,7 +347,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
     <Grid container style={{width: '100vw', height: '100vh - 80px'}}>
       <Grid item>
         <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar/>
+          <HeaderMenu design={inProgressDesign}/>
         </AppBar>
       </Grid>
       <Grid item>
@@ -300,44 +372,55 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
               >
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><MenuBook style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
-                                         fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 0 ? iconOnColor : iconColor}}
-                                           variant="h6">Backgrounds</Typography></Grid>
-                  </Grid>} {...a11yProps(0)} />
+                    <Grid item><MenuBook
+                      style={{color: menuChoice === MainMenuEnum.BACKGROUNDS ? iconOnColor : iconColor}}
+                      fontSize="large"/></Grid>
+                    <Grid item><Typography
+                      style={{color: menuChoice === MainMenuEnum.BACKGROUNDS ? iconOnColor : iconColor}}
+                      variant="h6">Backgrounds</Typography></Grid>
+                  </Grid>} {...a11yProps(MainMenuEnum.BACKGROUNDS)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><TextFields style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
+                    <Grid item><TextFields style={{color: menuChoice === MainMenuEnum.TEXT ? iconOnColor : iconColor}}
                                            fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 1 ? iconOnColor : iconColor}}
+                    <Grid item><Typography style={{color: menuChoice === MainMenuEnum.TEXT ? iconOnColor : iconColor}}
                                            variant="h6">Text</Typography></Grid>
-                  </Grid>} {...a11yProps(1)} />
+                  </Grid>} {...a11yProps(MainMenuEnum.TEXT)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Star style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
+                    <Grid item><Star style={{color: menuChoice === MainMenuEnum.ICONS ? iconOnColor : iconColor}}
                                      fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 2 ? iconOnColor : iconColor}}
+                    <Grid item><Typography style={{color: menuChoice === MainMenuEnum.ICONS ? iconOnColor : iconColor}}
                                            variant="h6">Icons</Typography></Grid>
-                  </Grid>} {...a11yProps(2)} />
+                  </Grid>} {...a11yProps(MainMenuEnum.ICONS)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Dashboard style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
-                                          fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 3 ? iconOnColor : iconColor}}
-                                           variant="h6">Elements</Typography></Grid>
-                  </Grid>} {...a11yProps(3)} />
+                    <Grid item><Dashboard
+                      style={{color: menuChoice === MainMenuEnum.ELEMENTS ? iconOnColor : iconColor}}
+                      fontSize="large"/></Grid>
+                    <Grid item><Typography
+                      style={{color: menuChoice === MainMenuEnum.ELEMENTS ? iconOnColor : iconColor}}
+                      variant="h6">Elements</Typography></Grid>
+                  </Grid>} {...a11yProps(MainMenuEnum.ELEMENTS)} />
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
-                    <Grid item><Layers style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
+                    <Grid item><Layers style={{color: menuChoice === MainMenuEnum.LAYERS ? iconOnColor : iconColor}}
                                        fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === 4 ? iconOnColor : iconColor}}
+                    <Grid item><Typography style={{color: menuChoice === MainMenuEnum.LAYERS ? iconOnColor : iconColor}}
                                            variant="h6">Layers</Typography></Grid>
-                  </Grid>} {...a11yProps(4)} />
+                  </Grid>} {...a11yProps(MainMenuEnum.LAYERS)} />
+                <Tab
+                  label={<Grid container direction="column" alignItems="center">
+                    <Grid item><Bookmarks style={{color: menuChoice === MainMenuEnum.DESIGNS ? iconOnColor : iconColor}}
+                                       fontSize="large"/></Grid>
+                    <Grid item><Typography style={{color: menuChoice === MainMenuEnum.DESIGNS ? iconOnColor : iconColor}}
+                                           variant="h6">Selected Designs</Typography></Grid>
+                  </Grid>} {...a11yProps(MainMenuEnum.DESIGNS)} />
               </Tabs>
             </Grid>
             <Grid item style={{backgroundColor: selectedTabContentBg, flexGrow: 2, color: selectedTabContentColor}}>
               <Toolbar/>
-              <TabPanel value={menuChoice} index={0}>
+              <TabPanel value={menuChoice} index={MainMenuEnum.BACKGROUNDS}>
                 <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Add Background</Typography>
                 <Grid item container spacing={1}>
                   {
@@ -362,7 +445,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   }
                 </Grid>
               </TabPanel>
-              <TabPanel value={menuChoice} index={1}>
+              <TabPanel value={menuChoice} index={MainMenuEnum.TEXT}>
                 <Grid item>
                   <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>New Text</Typography>
                 </Grid>
@@ -390,7 +473,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   }
                 </Grid>
               </TabPanel>
-              <TabPanel value={menuChoice} index={2}>
+              <TabPanel value={menuChoice} index={MainMenuEnum.ICONS}>
                 <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Icons</Typography>
                 <Grid container item xs={12}>
                   {
@@ -409,7 +492,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   }
                 </Grid>
               </TabPanel>
-              <TabPanel value={menuChoice} index={3}>
+              <TabPanel value={menuChoice} index={MainMenuEnum.ELEMENTS}>
                 <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Display Elements</Typography>
                 <Grid item container spacing={1}>
                   {
@@ -429,21 +512,21 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   }
                 </Grid>
               </TabPanel>
-              <TabPanel value={menuChoice} index={4}>
+              <TabPanel value={menuChoice} index={MainMenuEnum.LAYERS}>
                 <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Layers</Typography>
                 <Grid item container spacing={1}>
                   {
                     layers.map((layer: number[], layerIndex) => {
-                      return <Grid container item>
+                      return <Grid key={layerIndex} container item>
                         <Card
                           style={{
                             backgroundColor: NeonTheme.palette.background.default,
-                            width: "100%",
+                            maxWidth: '380px',
                             padding: NeonTheme.spacing(0, 3)
                           }}>
                           <Grid container>
                             <Grid item xs={2}>
-                              <Button  onClick={
+                              <Button onClick={
                                 () => {
                                   console.log('the layers to add', layer, selectedDesignElements)
                                   setSelectedDesignElements([...layer])
@@ -451,26 +534,76 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                                 }
                               }><Typography variant="h1" color="secondary">{layerIndex}:</Typography></Button>
                             </Grid>
-                            <Grid container item xs={10} wrap="nowrap" alignItems="center" spacing={1}>
+                            <Grid container item xs={10} wrap="nowrap" alignItems="center" spacing={1}
+                                  style={{overflowX: 'scroll'}}>
                               {
                                 layer.map((designElementIndex: number, index, des) => {
                                   console.log('all elements in this cycle', designElementIndex, index, des)
                                   return <Grid
-
+                                    key={index}
                                     item
                                     container
                                     justifyContent="center"
                                     alignItems="center">
-                                    <Button color={selectedDesignElements.includes(designElementIndex)?"secondary":undefined} onClick={() => {
-                                      setSelectedDesignElements([designElementIndex])
-                                    }}
-                                            style={{border: selectedDesignElements.includes(designElementIndex)?'1px solid '+ NeonTheme.palette.secondary.main:'1px solid white', width: 50, height: 50}}
-                                            variant="outlined">{inProgressDesign.elements[designElementIndex].type === DesignElementTypesEnum.TEXT ?
-                                      <TextFields/> : <Star/>}</Button></Grid>
+                                    <Button
+                                      color={selectedDesignElements.includes(designElementIndex) ? 'secondary' : undefined}
+                                      onClick={() => {
+                                        setSelectedDesignElements([designElementIndex])
+                                      }}
+                                      style={{
+                                        border: selectedDesignElements.includes(designElementIndex) ? '1px solid ' + NeonTheme.palette.secondary.main : '1px solid white',
+                                        width: 50,
+                                        borderRadius: 0,
+                                        height: 50
+                                      }}
+                                      variant="outlined">
+                                      {
+                                        inProgressDesign.elements[designElementIndex]?.type === DesignElementTypesEnum.TEXT ?
+                                          <TextFields/> : <Star/>
+                                      }
+                                    </Button>
+                                  </Grid>
                                 })
                               }
                             </Grid>
                           </Grid>
+                        </Card>
+                      </Grid>
+                    })
+                  }
+                </Grid>
+              </TabPanel>
+              <TabPanel value={menuChoice} index={MainMenuEnum.DESIGNS}>
+                <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Designs</Typography>
+                <Grid item container spacing={1}>
+                  {
+                    savedDesigns.map((savedDesign: DesignType, savedDesignIndex) => {
+                      return <Grid key={savedDesignIndex} container xs={6} item>
+                        <Card
+                          onClick={
+                            () => {
+                              setInProgressDesign(savedDesign)
+                            }
+                          }
+                          style={{
+                            backgroundColor: NeonTheme.palette.background.default,
+                            maxWidth: '200px',
+                            padding: NeonTheme.spacing(0, 3)
+                          }}>
+                          <CardContent>
+                          <Grid container>
+                            <Grid item xs={2}>
+                              {
+                                savedDesign.elements.map((element,elementIndex)=>{
+                                  return <div>{element.type === DesignElementTypesEnum.TEXT?<TextFields/>:<Star/>}</div>
+                                })
+                              }
+                            </Grid>
+                          </Grid>
+                          </CardContent>
+                          <CardActions color="secondary">
+                            <Button>{savedDesign.title}</Button>
+                          </CardActions>
                         </Card>
                       </Grid>
                     })

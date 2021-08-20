@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "neonscenecreator",
     "public": "build",
     "ignore": [
       "firebase.json",

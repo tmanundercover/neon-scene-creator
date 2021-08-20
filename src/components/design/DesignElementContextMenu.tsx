@@ -62,7 +62,9 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
       flickerOn: flickerOn,
       fontSize: fontSize,
       layer: layer,
-      type: DesignElementTypesEnum.TEXT
+      type: DesignElementTypesEnum.TEXT,
+      x: props.designElement?.x ?? 0,
+      y: props.designElement?.y ?? 0
     }
 
     if (props.setDesignElement) {
@@ -80,7 +82,9 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
       flickerOn: props.designElement?.flickerOn ?? true,
       fontSize: props.designElement?.fontSize ?? 4,
       layer: props.designElement?.layer ?? 0,
-      type: props.designElement?.type ?? DesignElementTypesEnum.TEXT
+      type: props.designElement?.type ?? DesignElementTypesEnum.TEXT,
+      x: props.designElement?.x ?? 0,
+      y: props.designElement?.y ?? 0
     }
 
     if (props.setDesignElement) {
@@ -287,7 +291,9 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
                   flickerOn: flickerOn,
                   fontSize: fontSize,
                   layer: layer,
-                  type: DesignElementTypesEnum.TEXT
+                  type: DesignElementTypesEnum.TEXT,
+                  x: props.designElement?.x ?? 0,
+                  y: props.designElement?.y ?? 0,
                 })}>
                 <Typography variant="button">
                   Add New Text</Typography>

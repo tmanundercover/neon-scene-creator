@@ -20,23 +20,24 @@ export type FontFaceSampleProps = {
 }
 
 const FontFaceSample: FunctionComponent<FontFaceSampleProps> = (props) => {
-  const classes = useStyles(NeonTheme)
 
-  const [currentLetter, setCurrentLetter] = React.useState<number>(0)
+  const [currentLetter] = React.useState<number>(0)
 
   const characterString = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890;!@#$%^&*()_+'
 
   const addToDesign = () => {
     const iconDesignElement: DesignElementType = {
       size: {height: 100, width: 120},
-      text: "New Text",
+      text: 'New Text',
       fontSize: 8,
       fontFace: props.fontFace,
       flickerOn: false,
       flickerStyle: 'PULSATE',
       color: 'green',
       layer: props.layer ?? 0,
-      type: DesignElementTypesEnum.TEXT
+      type: DesignElementTypesEnum.TEXT,
+      x: 0,
+      y: 0
     }
 
     console.log('about to add this element', iconDesignElement)
@@ -52,16 +53,16 @@ const FontFaceSample: FunctionComponent<FontFaceSampleProps> = (props) => {
             <Typography
               onClick={() => addToDesign()}
               variant="h1"
-                        style={{
-              ...props.fontFace,
-              textAlign: 'center',
-              textTransform: 'none',
-              // position: "absolute",
-              // visibility: "hidden",
-              height: 'auto',
-              width: 'auto',
-              whiteSpace: 'nowrap'
-            }}>{characterString.charAt(currentLetter)}</Typography>
+              style={{
+                ...props.fontFace,
+                textAlign: 'center',
+                textTransform: 'none',
+                // position: "absolute",
+                // visibility: "hidden",
+                height: 'auto',
+                width: 'auto',
+                whiteSpace: 'nowrap'
+              }}>{characterString.charAt(currentLetter)}</Typography>
           </Grid>
         </Grid>
         <Grid item>

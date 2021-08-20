@@ -5,13 +5,16 @@ import reportWebVitals from './reportWebVitals'
 import Canvas from './components/Canvas'
 import {CssBaseline, MuiThemeProvider} from '@material-ui/core'
 import NeonTheme from './theme/Theme'
+import {BrowserRouter as Router} from 'react-router-dom'
 
 ReactDOM.render(
   <React.StrictMode>
-    <MuiThemeProvider theme={NeonTheme}>
-      <CssBaseline/>
-      <Canvas/>
-    </MuiThemeProvider>
+    <Router>
+      <MuiThemeProvider theme={NeonTheme}>
+        <CssBaseline/>
+        <Canvas/>
+      </MuiThemeProvider>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 )
