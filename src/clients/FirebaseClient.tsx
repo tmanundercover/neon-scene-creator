@@ -14,6 +14,7 @@ var firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = firebase.initializeApp(firebaseConfig)
 
+// eslint-disable-next-line
 export default {
   firebaseApp
 }

@@ -4,15 +4,14 @@ import NeonTheme, {
   FacebookBlue,
   getFontFace,
   InstagramMagenta,
-  NeonYellowRoseBlueHex, PinterestRed,
+  NeonYellowRoseBlueHex,
+  PinterestRed,
   TwitterBlue
 } from '../../theme/Theme'
 import {Button, Grid, ListItem, Menu, MenuItem, Switch, Toolbar, Typography} from '@material-ui/core'
 import {ArrowRightAlt, Facebook, Instagram, Pinterest, Redo, Share, Twitter, Undo} from '@material-ui/icons'
 import {DesignType} from '../Canvas'
-import FirebaseClient from '../../clients/FirebaseClient'
 import FirebaseFirestoreClient from '../../clients/FirebaseFirestoreClient'
-
 
 export const useStyles = makeStyles((theme) => ({
   textField: (props) => ({
@@ -33,19 +32,18 @@ enum MainMenuItems {
   VIEW,
   SHARE
 }
+
 export type HeaderProps = {
   design: DesignType
 }
 
-const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
-  const classes = useStyles(NeonTheme)
-
+const HeaderMenu: FunctionComponent<HeaderProps> = (props: HeaderProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [currentMenu, setCurrentMenu] = React.useState<MainMenuItems | undefined>(undefined)
 
   const [checked, setChecked] = React.useState(['ruler'])
 
-  const saveDesign = ()=>{
+  const saveDesign = () => {
     FirebaseFirestoreClient.createDesign(props.design)
     handleClose()
   }
@@ -69,7 +67,7 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
   }
 
   const handleClose = () => {
-    console.log("closing the menu")
+    console.log('closing the menu')
     setCurrentMenu(undefined)
     setAnchorEl(null)
   }
@@ -82,7 +80,7 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
               onClick={
                 (e) =>
                   handleClick(e, MainMenuItems.FILE)}>
-              <Typography variant="h3" style={{color:"black"}}>File</Typography>
+              <Typography variant="h3" style={{color: 'black'}}>File</Typography>
             </Button>
             <Menu anchorEl={anchorEl}
                   keepMounted
@@ -92,7 +90,8 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
                 <Button onClick={handleClose}><Typography variant="h6" color="textSecondary">Open</Typography></Button>
               </MenuItem>
               <MenuItem>
-                <Button onClick={()=>saveDesign()}><Typography variant="h6" color="textSecondary">Save</Typography></Button>
+                <Button onClick={() => saveDesign()}><Typography variant="h6"
+                                                                 color="textSecondary">Save</Typography></Button>
               </MenuItem>
               <MenuItem>
                 <Button onClick={handleClose}><Typography variant="h6"
@@ -105,7 +104,7 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
               onClick={
                 (e) =>
                   handleClick(e, MainMenuItems.EDIT)}>
-              <Typography variant="h3" style={{color:"black"}}>Edit</Typography>
+              <Typography variant="h3" style={{color: 'black'}}>Edit</Typography>
             </Button>
             <Menu anchorEl={anchorEl}
                   keepMounted
@@ -122,7 +121,7 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
               onClick={
                 (e) =>
                   handleClick(e, MainMenuItems.VIEW)}>
-              <Typography variant="h3" style={{color:"black"}}>View</Typography></Button>
+              <Typography variant="h3" style={{color: 'black'}}>View</Typography></Button>
             <Menu anchorEl={anchorEl}
                   keepMounted
                   open={currentMenu === MainMenuItems.VIEW}
@@ -234,13 +233,13 @@ const HeaderMenu: FunctionComponent<HeaderProps> = (props:HeaderProps) => {
               <Menu
                 anchorEl={anchorEl}
                 keepMounted
-                MenuListProps={{dense:true, disablePadding: true}}
+                MenuListProps={{dense: true, disablePadding: true}}
                 open={currentMenu === MainMenuItems.SHARE}
                 onClose={handleClose}>
-                <MenuItem style={{backgroundColor: FacebookBlue}} onClick={handleClose}><Facebook /></MenuItem>
-                <MenuItem style={{backgroundColor: InstagramMagenta}} onClick={handleClose}><Instagram /></MenuItem>
-                <MenuItem style={{backgroundColor: TwitterBlue}} onClick={handleClose}><Twitter /></MenuItem>
-                <MenuItem style={{backgroundColor: PinterestRed}} onClick={handleClose}><Pinterest /></MenuItem>
+                <MenuItem style={{backgroundColor: FacebookBlue}} onClick={handleClose}><Facebook/></MenuItem>
+                <MenuItem style={{backgroundColor: InstagramMagenta}} onClick={handleClose}><Instagram/></MenuItem>
+                <MenuItem style={{backgroundColor: TwitterBlue}} onClick={handleClose}><Twitter/></MenuItem>
+                <MenuItem style={{backgroundColor: PinterestRed}} onClick={handleClose}><Pinterest/></MenuItem>
               </Menu>
               <Button variant="contained" style={{backgroundColor: NeonYellowRoseBlueHex}}>
                 <Grid container justifyContent="space-between" alignItems="stretch">

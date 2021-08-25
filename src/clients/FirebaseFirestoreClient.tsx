@@ -16,8 +16,6 @@ const getDesigns = async (): Promise<DesignType[]> => {
       const data = doc.data()
       const savedDesign:DesignType = {
         title: doc.id,
-        width: data.width,
-        height: data.height,
         elements: [...data.elements]
       }
 
@@ -42,6 +40,7 @@ const createDesign = async (designToSave: DesignType) => {
 
 }
 
+// eslint-disable-next-line
 export default {
   createDesign,
   getDesigns,

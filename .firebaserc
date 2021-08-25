@@ -1,5 +1,14 @@
 {
   "projects": {
-    "default": "neon-scene-creator-css"
-  }
+    "default": "scene-creators-83d41"
+  },
+  "targets": {
+      "scene-creators-83d41": {
+        "hosting": {
+          "neonscenecreator": [
+            "neonscenecreator"
+          ]
+        }
+      }
+    }
 }

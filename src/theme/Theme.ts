@@ -87,6 +87,8 @@ import wildYouthFont from './fonts/Wild-Youth-Typeface/WildYouth-Regular.otf'
 import elphFont from './fonts/elph_chubba/chubhand.ttf'
 import monitoricaFont from './fonts/IPHostMonitor-Font/OT-tt/Monitorica-Rg.ttf'
 import loveloFont from './fonts/LoveloLineLight/Lovelo Black.otf'
+import loveloFontLine from './fonts/LoveloLineLight/Lovelo Line Bold.otf'
+import loveloFontLineLight from './fonts/LoveloLineLight/Lovelo Line Light.otf'
 import stencilFont from './fonts/StencilStd.otf'
 import monotonFont from './fonts/Monoton/monoton/Monoton-Regular.ttf'
 import marskeFont from './fonts/Marske/Marske.otf'
@@ -290,6 +292,26 @@ export const allFontFaces: FontFace[] = [
     src: `
     local('Lovelo Black'),
     url(${loveloFont}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Lovelo Line Light',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Lovelo Line Light'),
+    url(${loveloFontLineLight}) format('opentype')
+  `
+  },
+  {
+    fontFamily: 'Lovelo Line Bold',
+    fontStyle: 'normal',
+    fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
+    fontWeight: 400,
+    src: `
+    local('Lovelo Line Bold'),
+    url(${loveloFontLine}) format('opentype')
   `
   },
   {
@@ -1103,7 +1125,7 @@ const NeonTheme = responsiveFontSizes(
         letterSpacing: '-0.03em'
       },
       h2: {
-        ...fonts['Designer-Bold'],
+        ...getFontFace('Designer-Bold'),
         textTransform: 'uppercase',
         // Title2
         fontSize: '32px',
@@ -1134,6 +1156,7 @@ const NeonTheme = responsiveFontSizes(
       },
       body1: {
         // Body
+        ...getFontFace('Designer-Bold'),
         fontSize: '17px',
         fontStyle: 'normal',
         fontWeight: 400,
@@ -1142,6 +1165,7 @@ const NeonTheme = responsiveFontSizes(
       },
       body2: {
         // Large
+        ...getFontFace('Designer-Bold'),
         fontSize: '19px',
         fontStyle: 'normal',
         fontWeight: 600,
@@ -1150,7 +1174,7 @@ const NeonTheme = responsiveFontSizes(
       },
       button: {
         // Button
-        ...getFontFace('Designer-Regular'),
+        ...getFontFace('Designer-Bold'),
         fontSize: '19px',
         fontStyle: 'normal',
         fontWeight: 700,

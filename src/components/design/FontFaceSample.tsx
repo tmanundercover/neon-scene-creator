@@ -1,6 +1,6 @@
 import React, {FunctionComponent} from 'react'
 import {makeStyles, Theme} from '@material-ui/core/styles'
-import NeonTheme, {NeonFuchsiaHex} from '../../theme/Theme'
+import {NeonFuchsiaHex} from '../../theme/Theme'
 import {Grid, Typography} from '@material-ui/core'
 import {DesignElementType, DesignElementTypesEnum} from '../Canvas'
 

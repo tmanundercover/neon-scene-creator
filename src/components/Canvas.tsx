@@ -10,6 +10,7 @@ import {
   CardContent,
   Drawer,
   Grid,
+  Modal,
   Tab,
   Tabs,
   Toolbar,
@@ -27,7 +28,7 @@ import NeonTheme, {
   NeonGreenHex,
   NeonYellowRoseBlueHex
 } from '../theme/Theme'
-import {Bookmarks, Dashboard, Layers, MenuBook, Star, TextFields} from '@material-ui/icons'
+import {Bookmarks, Close, Dashboard, Layers, MenuBook, Star, TextFields} from '@material-ui/icons'
 import galaxy1 from '../assets/backgrounds/galaxy/2474215.jpg'
 import galaxy2 from '../assets/backgrounds/galaxy/2474216.jpg'
 import galaxy3 from '../assets/backgrounds/galaxy/5517472.jpg'
@@ -41,16 +42,17 @@ import Preview from './design/ruler/Preview'
 import Design from './design/Design'
 import HeaderMenu from './header/Header'
 import FirebaseAnalyticsClient from '../clients/FirebaseAnalyticsClient'
-import FirebaseClient from '../clients/FirebaseClient'
 import FirebaseFirestoreClient from '../clients/FirebaseFirestoreClient'
+import contactMeBubble from '../assets/fuschia-speech-bubble.png'
+import {motion, useAnimation} from 'framer-motion'
+import bullhorn from '../assets/fuschia-bullhorn.png'
+import ContactUs from './contact-us/ContactUs'
 
 const drawerWidth = 590
 const rulerWidth = 40
 const iconColor = 'white'
-const iconBGColor = 'transparent'
 const iconOnColor = NeonFuchsiaHex
 const textFieldColor = 'black'
-const onBgColor = NeonYellowRoseBlueHex
 const selectedTabContentBg = NeonYellowRoseBlueHex
 const indicatorColor = NeonYellowRoseBlueHex
 const selectedTabContentColor = 'black'
@@ -75,7 +77,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     paddingLeft: drawerWidth,
     backgroundColor: theme.palette.background.paper,
-    height: '100vh',
     width: `calc(100vw - ${drawerWidth}px)`
   },
   tabs: {
@@ -96,8 +97,6 @@ export type CanvasProps = {}
 
 export type DesignType = {
   title: string,
-  width: number,
-  height: number,
   elements: DesignElementType[]
 }
 
@@ -108,17 +107,17 @@ export enum DesignElementTypesEnum {
 
 
 export type DesignElementType = {
-  size: { height: number, width: number },
-  x: number,
-  y: number,
-  text: string,
-  fontSize: number,
-  fontFace: FontFace,
-  flickerOn: boolean,
-  flickerStyle: 'PULSATE' | 'SUBTLE' | 'BASIC' | string,
-  color: 'green' | 'fuchsia' | 'yellow' | 'blue' | 'violet' | string
-  layer: number,
-  type: DesignElementTypesEnum
+  size?: { height: number, width: number },
+  x?: number,
+  y?: number,
+  text?: string,
+  fontSize?: number,
+  fontFace?: FontFace,
+  flickerOn?: boolean,
+  flickerStyle?: 'PULSATE' | 'SUBTLE' | 'BASIC' | string,
+  color?: 'green' | 'fuchsia' | 'yellow' | 'blue' | 'violet' | string
+  layer?: number,
+  type?: DesignElementTypesEnum
 }
 
 const INITIAL_DESIGN = {
@@ -225,44 +224,48 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
 
   const [inProgressDesign, setInProgressDesign] = React.useState<DesignType>(INITIAL_DESIGN)
   const [menuChoice, setMenuChoice] = React.useState<MainMenuEnum>(MainMenuEnum.BACKGROUNDS)
-  const [fontFace, setFontFace] = React.useState<FontFace>(fonts[0])
-  const [fontSize, setFontSize] = React.useState<number>(4)
-  const [color, setColor] = React.useState<string>('green')
-  const [flickerStyle, setFlickerStyle] = React.useState<string>('BASIC')
-  const [text, setText] = React.useState<string>('New Text')
+  const [fontFace] = React.useState<FontFace>(fonts[0])
+  const [fontSize] = React.useState<number>(4)
+  const [color] = React.useState<string>('green')
+  const [flickerStyle] = React.useState<string>('BASIC')
+  const [text] = React.useState<string>('New Text')
   const [contextCanvasMenu, setCanvasContextMenu] = React.useState<any>(undefined)
   const [backgroundImage, setBackgroundImage] = React.useState<{ title: string, file: any } | null>(null)
-  const [flickerOn, setFlickerOn] = React.useState<boolean>(true)
+  const [flickerOn] = React.useState<boolean>(true)
   const [selectedDesignElements, setSelectedDesignElements] = React.useState<number[]>([])
-  const [maxLayer, setMaxLayer] = React.useState<number>(0)
+  const [maxLayer] = React.useState<number>(0)
   const [layers, setLayers] = React.useState<number[][]>([])
   const [savedDesigns, setSavedDesigns] = React.useState<DesignType[]>([])
+  const [openContactUs, setOpenContactUs] = React.useState<boolean>(false)
 
   const setContextMenu = (menu: any) => {
     setCanvasContextMenu(menu)
   }
 
   const setDesignElement = (designElement: DesignElementType, index: number) => {
-    setInProgressDesign(state => ({
-      ...state,
-      elements: {
-        ...state.elements,
-        [index]: designElement
+    const elements = [...inProgressDesign.elements].map((element, elementIndex) =>{
+      if(index === elementIndex)
+      {
+        return designElement
       }
+      return element
+    })
+    elements.concat(designElement)
+
+    setInProgressDesign(state => ({
+      ...state, elements
     }))
   }
 
-  React.useEffect(()=>{
-    FirebaseFirestoreClient.getDesigns().then((savedDesigns:DesignType[])=>{
-      console.log("Saved Designs Retrieved: ", savedDesigns)
+  React.useEffect(() => {
+    FirebaseFirestoreClient.getDesigns().then((savedDesigns: DesignType[]) => {
+      console.log('Saved Designs Retrieved: ', savedDesigns)
       setSavedDesigns(savedDesigns)
     })
-  },[])
+  }, [])
 
-  React.useEffect(() => {
-    getLayers(inProgressDesign.elements)
-  }, [inProgressDesign.elements, inProgressDesign])
 
+  // eslint-disable-next-line
   const getLayers = (designElements: DesignElementType[]) => {
     let newLayers = []
 
@@ -283,9 +286,13 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
     setLayers(newLayers)
   }
 
+  React.useEffect(() => {
+    getLayers(inProgressDesign.elements)
+  }, [inProgressDesign.elements, inProgressDesign, getLayers])
+
   const addNewDesignElement = (designElement?: DesignElementType) => {
     const newDesignElement: DesignElementType = {
-      size: {height: designElement?.size.height ?? 250, width: designElement?.size.width ?? 250},
+      size: {height: designElement?.size?.height ?? 250, width: designElement?.size?.width ?? 250},
       text: designElement?.text ?? text,
       fontSize: designElement?.fontSize ?? fontSize,
       fontFace: designElement?.fontFace ?? fontFace,
@@ -335,21 +342,26 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
     document.title = `Neon Scene Creator | ${title}`
 
     FirebaseAnalyticsClient.analyticsPageView(location.pathname + '/' + title, title)
-  }, [menuChoice])
+  }, [menuChoice, location.pathname, getLayers])
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setMenuChoice(newValue)
   }
   const negOne = -1
 
+  const controls = useAnimation()
+
+  const contactMe = () => {
+    setOpenContactUs(true)
+  }
+
+
   // @ts-ignore
   return (
-    <Grid container style={{width: '100vw', height: '100vh - 80px'}}>
-      <Grid item>
-        <AppBar position="fixed" className={classes.appBar}>
-          <HeaderMenu design={inProgressDesign}/>
-        </AppBar>
-      </Grid>
+    <Grid container alignItems="stretch">
+      <AppBar position="fixed" className={classes.appBar}>
+        <HeaderMenu design={inProgressDesign}/>
+      </AppBar>
       <Grid item>
         <Drawer
           className={classes.drawer}
@@ -358,8 +370,8 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
             paper: classes.drawerPaper
           }}
         >
-          <Grid container alignItems="stretch" wrap="nowrap">
-            <Grid item style={{height: `calc(100vh)`}}>
+          <Grid container wrap="nowrap" style={{height: '100vh'}}>
+            <Grid item>
               <Toolbar/>
               <Tabs
                 TabIndicatorProps={{style: {backgroundColor: indicatorColor, width: '100%', zIndex: negOne}}}
@@ -412,9 +424,10 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 <Tab
                   label={<Grid container direction="column" alignItems="center">
                     <Grid item><Bookmarks style={{color: menuChoice === MainMenuEnum.DESIGNS ? iconOnColor : iconColor}}
-                                       fontSize="large"/></Grid>
-                    <Grid item><Typography style={{color: menuChoice === MainMenuEnum.DESIGNS ? iconOnColor : iconColor}}
-                                           variant="h6">Selected Designs</Typography></Grid>
+                                          fontSize="large"/></Grid>
+                    <Grid item><Typography
+                      style={{color: menuChoice === MainMenuEnum.DESIGNS ? iconOnColor : iconColor}}
+                      variant="h6">Selected Designs</Typography></Grid>
                   </Grid>} {...a11yProps(MainMenuEnum.DESIGNS)} />
               </Tabs>
             </Grid>
@@ -496,7 +509,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                 <Typography variant="h2" color="secondary" style={{textAlign: 'right'}}>Display Elements</Typography>
                 <Grid item container spacing={1}>
                   {
-                    inProgressDesign.elements.map((designElement: DesignElementType, index: number) => {
+                    inProgressDesign.elements.map && inProgressDesign.elements.map((designElement: DesignElementType, index: number) => {
                       return <Grid item key={index} xs={12} style={{padding: NeonTheme.spacing(1, 1)}}>
                         <Card onClick={() => {
                           setSelectedDesignElements([index])
@@ -588,18 +601,20 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                           style={{
                             backgroundColor: NeonTheme.palette.background.default,
                             maxWidth: '200px',
+                            maxHeight: '200px',
                             padding: NeonTheme.spacing(0, 3)
                           }}>
                           <CardContent>
-                          <Grid container>
-                            <Grid item xs={2}>
-                              {
-                                savedDesign.elements.map((element,elementIndex)=>{
-                                  return <div>{element.type === DesignElementTypesEnum.TEXT?<TextFields/>:<Star/>}</div>
-                                })
-                              }
+                            <Grid container>
+                              <Grid item xs={2}>
+                                {
+                                  savedDesign.elements.map((element, elementIndex) => {
+                                    return <div>{element.type === DesignElementTypesEnum.TEXT ? <TextFields/> :
+                                      <Star/>}</div>
+                                  })
+                                }
+                              </Grid>
                             </Grid>
-                          </Grid>
                           </CardContent>
                           <CardActions color="secondary">
                             <Button>{savedDesign.title}</Button>
@@ -614,7 +629,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
           </Grid>
         </Drawer>
       </Grid>
-      <Grid container item>
+      <Grid container item style={{height: '100vh', overflowY: 'hidden'}}>
         <main className={classes.content}>
           <Grid container direction="column">
             <Grid item container><Toolbar/></Grid>
@@ -642,7 +657,7 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
                   item
                   style={{
                     minWidth: `calc(100vw - ${rulerWidth + drawerWidth}px)`,
-                    height: `calc(100vh - ${rulerWidth}px)`,
+                    // height: `calc(100vh - ${rulerWidth}px)`,
                     backgroundColor: 'black'
                   }}>
                   <Design
@@ -657,6 +672,58 @@ const Canvas: FunctionComponent<CanvasProps> = (props) => {
           </Grid>
         </main>
       </Grid>
+      <Grid container wrap="nowrap" item style={{position: 'fixed', bottom: 12, left: 32, zIndex: 9999, width: '200px'}}
+            onMouseOver={() => controls.start('visible')}
+            onMouseLeave={() => controls.start('hidden')} onClick={() => {
+        contactMe()
+      }}>
+        <Grid item>
+          <motion.div
+            initial={'hidden'}
+            animate={controls}
+            variants={{
+              // eslint-disable-next-line
+              ['visible']: {scale: 2.5, marginLeft: '-60px'},
+              // eslint-disable-next-line
+              ['hidden']: {scale: 2, marginLeft: '-20px'}
+            }}
+          >
+            <img alt="speech bubble" src={contactMeBubble} style={{marginLeft: '50px', width: '100px', height: '100px'}}/>
+          </motion.div>
+        </Grid>
+        <Grid item>
+          <motion.div
+            initial={'hidden'}
+            animate={controls}
+            variants={{
+              // eslint-disable-next-line
+              ['visible']: {opacity: 1, scale: 1.5, marginLeft: '40px'},
+              // eslint-disable-next-line
+              ['hidden']: {opacity: 0, scale: 0}
+            }}
+            // onHoverStart={() => controls.start('visible')}
+            // onHoverEnd={() => controls.start('hidden')}
+          >
+            <img alt="bullhorn" src={bullhorn} style={{marginLeft: '-96px', width: '100px', height: '100px'}}
+            />
+          </motion.div>
+        </Grid>
+
+
+      </Grid>
+
+      <Modal
+        open={openContactUs}
+      >
+        <Grid container style={{width: '100vw', height: '100vh', backgroundColor: '#1F1F1F', overflowY:"scroll"}}>
+          <Grid item container justifyContent="flex-end"><Close fontSize="large" onClick={()=>{
+            setOpenContactUs(false)
+            document.title = "NEON SCENE CREATOR | Contact Us"
+            FirebaseAnalyticsClient.analyticsPageView('/contactUs', document.title)
+          }} style={{marginTop: "24px", marginRight: "24px"}}/></Grid>
+        <ContactUs sanity={"tmanundercover"} github={"tmanundercover"} address={"Los Angeles, CA 91402"} email={"hello@TheHandsomestNerd.com"} phone={"000.000.0000"} facebook={"kamikazenupe1911"} twitter={"kamikazethez"} linkedIn={"terrell-singleton-5657918"} instagram={"thehandsomestnerd"}/>
+        </Grid>
+      </Modal>
     </Grid>
   )
 }

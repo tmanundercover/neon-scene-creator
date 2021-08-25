@@ -42,15 +42,15 @@ export type DesignElementContextMenuProps = {
 const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps> = (props) => {
   const classes = useStyles(props)
 
-  const [height, setHeight] = React.useState<number>(props.designElement?.size.height ?? 250)
-  const [width, setWidth] = React.useState<number>(props.designElement?.size.width ?? 250)
+  const [height, setHeight] = React.useState<number>(props.designElement?.size?.height ?? 250)
+  const [width, setWidth] = React.useState<number>(props.designElement?.size?.width ?? 250)
   const [text, setText] = React.useState<string>(props.designElement?.text ?? 'New Text')
   const [fontFace, setFontFace] = React.useState<FontFace>(props.designElement?.fontFace ?? allFontFaces[0])
   const [fontSize, setFontSize] = React.useState<number>(4)
   const [flickerStyle, setFlickerStyle] = React.useState<string>(props.designElement?.flickerStyle ?? 'pulsate')
   const [color, setColor] = React.useState<string>(props.designElement?.color ?? 'green')
   const [flickerOn, setFlickerOn] = React.useState<boolean>(props.designElement?.flickerOn ?? true)
-  const [layer, setLayer] = React.useState<number>(props.designElement?.layer ?? 0)
+  const [layer] = React.useState<number>(props.designElement?.layer ?? 0)
 
   React.useEffect(() => {
     const designElement: DesignElementType = {
@@ -70,11 +70,11 @@ const DesignElementContextMenu: FunctionComponent<DesignElementContextMenuProps>
     if (props.setDesignElement) {
       props.setDesignElement(designElement)
     }
-  }, [width, height, text, fontFace, flickerStyle, color, fontSize, flickerOn])
+  }, [width, height, text, fontFace, flickerStyle, color, fontSize, flickerOn, layer, props])
 
   React.useEffect(() => {
     const designElement = {
-      size: {width: props.designElement?.size.width ?? 250, height: props.designElement?.size.height ?? 250},
+      size: {width: props.designElement?.size?.width ?? 250, height: props.designElement?.size?.height ?? 250},
       text: props.designElement?.text ?? '',
       fontFace: props.designElement?.fontFace ?? allFontFaces[0],
       flickerStyle: props.designElement?.flickerStyle ?? 'PULSATE',
