@@ -12,14 +12,19 @@
   "engines": {
     "node": "14"
   },
-  "main": "lib/index.js",
+  "main": "lib/src/index.js",
   "dependencies": {
+    "@google-cloud/firestore": "^4.14.2",
     "@sanity/client": "^2.15.0",
     "@sendgrid/mail": "^7.4.6",
+    "@types/detect-node": "^2.0.0",
     "@types/multer": "^1.4.7",
+    "detect-node": "^2.1.0",
+    "firebase": "^9.0.0",
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",
-    "multer": "^1.4.3"
+    "multer": "^1.4.3",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.9.1",

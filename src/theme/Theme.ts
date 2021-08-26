@@ -87,6 +87,7 @@ import wildYouthFont from './fonts/Wild-Youth-Typeface/WildYouth-Regular.otf'
 import elphFont from './fonts/elph_chubba/chubhand.ttf'
 import monitoricaFont from './fonts/IPHostMonitor-Font/OT-tt/Monitorica-Rg.ttf'
 import loveloFont from './fonts/LoveloLineLight/Lovelo Black.otf'
+import loveloFontTTF from './fonts/LoveloLineLight/LoveloBlack.ttf'
 import loveloFontLine from './fonts/LoveloLineLight/Lovelo Line Bold.otf'
 import loveloFontLineLight from './fonts/LoveloLineLight/Lovelo Line Light.otf'
 import stencilFont from './fonts/StencilStd.otf'
@@ -288,10 +289,11 @@ export const allFontFaces: FontFace[] = [
     fontFamily: 'Lovelo Black',
     fontStyle: 'normal',
     fontDisplay: 'swap', // uses the fallback font to display the text until the custom font has fully downloaded. This is also known as a “flash of unstyled text” or FOUT.
-    fontWeight: 400,
+    fontWeight: 900,
     src: `
     local('Lovelo Black'),
-    url(${loveloFont}) format('opentype')
+    url(${loveloFont}) format('opentype'),
+    url(${loveloFontTTF}) format('truetype')
   `
   },
   {

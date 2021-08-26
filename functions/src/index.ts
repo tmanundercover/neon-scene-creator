@@ -4,64 +4,31 @@ import * as functions from "firebase-functions";
 import {sanityClient} from "./SanityClient";
 
 import multer from "multer";
-// import {config} from "firebase-functions";
 import express from "express";
 import sgMail from "@sendgrid/mail";
 import cors from "cors";
 
-// const functions = require("firebase-functions");
+import firestoreClient from "./FirebaseFirestoreClient";
 
-// const express = require("express");
-// const sgMail = require("@sendgrid/mail");
-// eslint-disable-next-line max-len
 const API_KEY = functions.config() && functions.config().sendgrid ?
   functions.config().sendgrid.api_key : process.env.SENDGRID_API_KEY;
 
 sgMail.setApiKey(API_KEY);
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
-// const httpFetch = require("node-fetch");
-
-/** direct from firebase * */
-// type firebaseDecodedToken = {
-//   name: string;
-//   iss: string;
-//   aud: string;
-//   auth_time: string;
-//   user_id: string;
-//   sub: string;
-//   iat: number;
-//   exp: number;
-//   email: string;
-//   picture: string;
-//   email_verified: boolean;
-//   firebase: { identities: { email: [] }; sign_in_provider: string };
-//   uid: string;
-//   admin: boolean;
-// };
-
-/** a user from the users table in the AWdb NOT to be confused with the user
- * from firebase authentication * */
-// type firebaseAwUser = {
-//   firebaseUUID: string;
-//   username: string;
-//   admin: string;
-//   email: string;
-//   getIdToken: any;
-//   photoURL: string
-// };
-
-/** Here we are configuring express to use body-parser as middle-ware.
- * for POST commands * */
-// const bodyParser = require('body-parser');
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
 
 /** Enable cors on the server * */
 const upload = multer();
 const app = express();
+
+const whitelist = ["https://neonscenecreator.com/", "https://lightball-vegas.com/"];
+
 app.use(cors({
-  origin: "https://neonscenecreator.com/",
+  origin: (origin:string| undefined, callback) => {
+    if (origin && whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   optionsSuccessStatus: 200,
 }));
 
@@ -96,7 +63,7 @@ app.use(upload.array(""));
 export type SanityContactUs = NeonContactUs
 
 export type NeonContactUs = {
-  _id?:string,
+  _id?: string,
   name?: string,
   companyName?: string,
   email?: string,
@@ -128,6 +95,17 @@ enum responseCodes {
   NO_NEW_CONTACTS = "001",
   APPLICATION_ERROR = "401"
 }
+
+app.get("/getSavedDesign/:designId", (req: any, res: any) => {
+  // get the param
+  const designId = req.params.designId.trim();
+  console.log("getSavedDesign: find ", designId);
+
+  firestoreClient.getDesign(designId).then((returnedDesign)=>{
+  // get the firebase design that matches the param
+    res.send(returnedDesign);
+  });
+});
 
 // Accepts payloads from Sanity hooks shaped below.
 // Payload expected from Sanity Webhook
